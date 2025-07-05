@@ -1,20 +1,19 @@
-import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomeScreen from './screens/HomeScreen';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <main className="flex flex-col items-center gap-8 py-16 max-w-[1280px] mx-auto">
-      <h1 className="text-4xl font-bold">Hello React & Tailwind!</h1>
-      <div className="flex flex-row items-center gap-6">
-        <button
-          className="bg-sky-300 px-3 py-2 rounded hover:bg-sky-400"
-          onClick={() => setCount(count + 1)}
-        >
-          Count: {count}
-        </button>
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/matches" element={<div>Matches Screen</div>} />
+          <Route path="/bookings" element={<div>Bookings Screen</div>} />
+          <Route path="/leaderboard" element={<div>Leaderboard Screen</div>} />
+          <Route path="/trainings" element={<div>Trainings Screen</div>} />
+        </Routes>
       </div>
-    </main>
+    </Router>
   );
 }
 
