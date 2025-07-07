@@ -2,26 +2,32 @@ import { User, Booking, DateOption } from "../types";
 
 export const currentUser: User = {
   id: "1",
-  name: "Emy Wilson",
+  name: "Katarina",
   avatar: "/api/placeholder/60/60",
-  rating: 8.5,
+  rating: 47,
   location: "Tennis Camp, Kyiv",
 };
 
 export const userBookings: Booking[] = [
   {
     id: "1",
+    type: "match",
+    opponent: "Boško Simović",
     venue: "Baseline",
-    date: "Sub 21 Oct",
-    time: "14:00-16:00",
-    status: "potvrđeno",
+    court: "Teren broj 1",
+    date: "Danas",
+    time: "2:00 PM",
+    status: "confirmed",
   },
   {
     id: "2",
-    venue: "IT Tennis League",
-    date: "Sat 21 Oct",
-    time: "14:00-",
-    status: "potvrđeno",
+    type: "training",
+    trainer: "Zoran Bučan",
+    venue: "Baseline", 
+    court: "Teren broj 3",
+    date: "Sutra",
+    time: "10:00 AM",
+    status: "pending",
   },
 ];
 

@@ -14,7 +14,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <div className="h-screen relative overflow-hidden pb-20" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div className="h-screen relative overflow-hidden pb-24" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Import Inter Font */}
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
       
@@ -61,12 +61,18 @@ export default function HomeScreen() {
         {/* Header */}
         <div className="flex justify-between items-start mb-2">
           <div className="flex flex-col">
-            {/* Profile Photo with More Space Below */}
-            <img 
-              src="https://randomuser.me/api/portraits/women/24.jpg"
-              alt="Profile"
-              className="w-12 h-12 rounded-full mb-8 shadow-lg object-cover"
-            />
+            {/* Profile Photo - Clean with Glow Only */}
+            <div className="relative mb-6">
+              <img 
+                src="https://randomuser.me/api/portraits/women/24.jpg"
+                alt="Profile"
+                className="w-12 h-12 rounded-full shadow-lg object-cover"
+                style={{ 
+                  boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.4), 0 8px 25px -5px rgba(0, 0, 0, 0.3)' 
+                }}
+              />
+            </div>
+            
             <div>
               {/* Greeting with animated emoji */}
               <div className="flex items-center space-x-2">
@@ -85,30 +91,30 @@ export default function HomeScreen() {
           </div>
         </div>
 
-        {/* Rating with much less padding */}
-        <div className="flex items-center space-x-2 mb-6 mt-1">
+        {/* Rating */}
+        <div className="flex items-center space-x-2 mb-4">
           <Star className="w-4 h-4 fill-white text-white" />
           <span className="text-base font-semibold tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '600' }}>47 rank</span>
           <TrendingUp className="w-4 h-4 text-green-400" />
         </div>
 
         {/* Main Action Buttons */}
-        <div style={{ marginTop: '160px', marginBottom: '40px' }}>
-          <div className="space-y-4">
+        <div style={{ marginTop: '140px', marginBottom: '32px' }}>
+          <div className="space-y-3">
             <button
               onClick={handleTerenClick}
-              className="w-full bg-white/85 backdrop-blur-md border border-white/30 rounded-2xl p-5 shadow-2xl hover:bg-white/90 hover:shadow-3xl transition-all active:scale-98 group"
+              className="w-full bg-white/85 backdrop-blur-md border border-white/30 rounded-2xl p-4 shadow-2xl hover:bg-white/90 hover:shadow-3xl transition-all active:scale-98 group"
             >
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <MapPin className="w-7 h-7 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <MapPin className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 text-left">
-                  <div className="text-gray-900 font-bold text-xl tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>Pronađi Teren</div>
+                  <div className="text-gray-900 font-bold text-lg tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>Pronađi Teren</div>
                   <div className="text-gray-600 font-medium text-sm tracking-wide" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>Rezerviši terene u blizini</div>
                 </div>
                 <div className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -117,18 +123,18 @@ export default function HomeScreen() {
 
             <button
               onClick={handleMecClick}
-              className="w-full bg-white/85 backdrop-blur-md border border-white/30 rounded-2xl p-5 shadow-2xl hover:bg-white/90 hover:shadow-3xl transition-all active:scale-98 group"
+              className="w-full bg-white/85 backdrop-blur-md border border-white/30 rounded-2xl p-4 shadow-2xl hover:bg-white/90 hover:shadow-3xl transition-all active:scale-98 group"
             >
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Zap className="w-7 h-7 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Zap className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 text-left">
-                  <div className="text-gray-900 font-bold text-xl tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>Pronađi Meč</div>
+                  <div className="text-gray-900 font-bold text-lg tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>Pronađi Meč</div>
                   <div className="text-gray-600 font-medium text-sm tracking-wide" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>Igraj protiv drugih igrača</div>
                 </div>
                 <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -137,14 +143,15 @@ export default function HomeScreen() {
           </div>
         </div>
 
-        {/* Your Bookings */}
-        <div style={{ marginBottom: '40px' }}>
-          <h2 className="text-3xl tracking-tight drop-shadow-sm mb-4" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>
+        {/* Your Bookings - Better Scrolling UX */}
+        <div style={{ marginBottom: '20px' }}>
+          <h2 className="text-2xl tracking-tight drop-shadow-sm mb-3" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>
             <span className="font-bold">Vaše</span>{' '}
             <span className="font-light" style={{ fontWeight: '300' }}>Rezervacije</span>
           </h2>
           
-          <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+          {/* Extended right margin to show partial card for scrolling hint */}
+          <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide -mr-6 pr-6">
             {userBookings.map((booking) => (
               <BookingCard key={booking.id} booking={booking} />
             ))}
