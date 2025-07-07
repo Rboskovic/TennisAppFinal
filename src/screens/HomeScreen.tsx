@@ -1,8 +1,13 @@
 import { Star, Menu, MapPin, Zap, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
 import BookingCard from '../components/BookingCard';
+import RankingModal from '../components/RankingModal';
 import { currentUser, userBookings } from '../data/mockData';
+import { rankingData } from '../data/rankingData';
 
 export default function HomeScreen() {
+  const [showRankingModal, setShowRankingModal] = useState(false);
+
   const handleTerenClick = () => {
     console.log('Pronađi Teren clicked');
     // TODO: Navigate to court booking
@@ -11,6 +16,10 @@ export default function HomeScreen() {
   const handleMecClick = () => {
     console.log('Pronađi Meč clicked');
     // TODO: Navigate to match finding
+  };
+
+  const handleRankClick = () => {
+    setShowRankingModal(true);
   };
 
   return (
@@ -61,7 +70,7 @@ export default function HomeScreen() {
         {/* Header */}
         <div className="flex justify-between items-start mb-2">
           <div className="flex flex-col">
-            {/* Profile Photo - Clean with Glow Only */}
+            {/* Profile Photo */}
             <div className="relative mb-6">
               <img 
                 src="https://randomuser.me/api/portraits/women/24.jpg"
@@ -91,12 +100,15 @@ export default function HomeScreen() {
           </div>
         </div>
 
-        {/* Rating */}
-        <div className="flex items-center space-x-2 mb-4">
+        {/* Rating - Now Clickable */}
+        <button 
+          onClick={handleRankClick}
+          className="flex items-center space-x-2 mb-4 hover:bg-white/10 rounded-xl p-2 -ml-2 transition-all"
+        >
           <Star className="w-4 h-4 fill-white text-white" />
           <span className="text-base font-semibold tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '600' }}>47 rank</span>
           <TrendingUp className="w-4 h-4 text-green-400" />
-        </div>
+        </button>
 
         {/* Main Action Buttons */}
         <div style={{ marginTop: '140px', marginBottom: '32px' }}>
@@ -143,14 +155,13 @@ export default function HomeScreen() {
           </div>
         </div>
 
-        {/* Your Bookings - Better Scrolling UX */}
+        {/* Your Bookings */}
         <div style={{ marginBottom: '20px' }}>
           <h2 className="text-2xl tracking-tight drop-shadow-sm mb-3" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>
             <span className="font-bold">Vaše</span>{' '}
             <span className="font-light" style={{ fontWeight: '300' }}>Rezervacije</span>
           </h2>
           
-          {/* Extended right margin to show partial card for scrolling hint */}
           <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide -mr-6 pr-6">
             {userBookings.map((booking) => (
               <BookingCard key={booking.id} booking={booking} />
@@ -158,6 +169,13 @@ export default function HomeScreen() {
           </div>
         </div>
       </div>
+
+      {/* Ranking Modal */}
+      <RankingModal 
+        isOpen={showRankingModal} 
+        onClose={() => setShowRankingModal(false)}
+        rankings={rankingData}
+      />
     </div>
   );
 }

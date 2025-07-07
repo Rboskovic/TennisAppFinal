@@ -22,3 +22,16 @@ export interface DateOption {
   date: number;
   available: boolean;
 }
+
+export interface PlayerRanking {
+  id: string;
+  rank: number;
+  name: string;
+  avatar: string;
+  rating: number;
+  location: string;
+  trend: 'up' | 'down' | 'same';
+  trendChange: number;
+  recentMatches: number;
+  isCurrentUser?: boolean;
+}
