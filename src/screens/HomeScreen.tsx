@@ -1,13 +1,23 @@
-import { Star, Settings, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { Star, Menu, MapPin, Zap, TrendingUp } from 'lucide-react';
 import BookingCard from '../components/BookingCard';
 import { currentUser, userBookings } from '../data/mockData';
 
 export default function HomeScreen() {
-  const [showFabModal, setShowFabModal] = useState(false);
+  const handleTerenClick = () => {
+    console.log('Pronađi Teren clicked');
+    // TODO: Navigate to court booking
+  };
+
+  const handleMecClick = () => {
+    console.log('Pronađi Meč clicked');
+    // TODO: Navigate to match finding
+  };
 
   return (
-    <div className="h-screen relative overflow-hidden pb-20">
+    <div className="h-screen relative overflow-hidden pb-20" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+      {/* Import Inter Font */}
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+      
       <div 
         className="absolute inset-0"
         style={{
@@ -22,6 +32,19 @@ export default function HomeScreen() {
       </div>
 
       <style jsx>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        @keyframes wave {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(20deg); }
+          75% { transform: rotate(-10deg); }
+        }
+        
+        .wave-emoji {
+          animation: wave 2s ease-in-out infinite;
+          transform-origin: 70% 70%;
+        }
+        
         @media (max-height: 700px) {
           .bg-responsive {
             background-position: center calc(50% - 40px) !important;
@@ -36,33 +59,89 @@ export default function HomeScreen() {
 
       <div className="relative z-10 p-6 text-white">
         {/* Header */}
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-2">
           <div className="flex flex-col">
-            <div className="w-12 h-12 rounded-full mb-3 shadow-lg bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-              <span className="text-white font-semibold text-lg">K</span>
-            </div>
-            <div className="space-y-0">
-              <div className="text-xl font-medium opacity-90 tracking-wide">Dobar dan, 👋</div>
-              <div className="text-4xl font-bold leading-tight text-white tracking-tight">Katarina</div>
+            {/* Profile Photo with More Space Below */}
+            <img 
+              src="https://randomuser.me/api/portraits/women/24.jpg"
+              alt="Profile"
+              className="w-12 h-12 rounded-full mb-8 shadow-lg object-cover"
+            />
+            <div>
+              {/* Greeting with animated emoji */}
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl font-medium opacity-90 tracking-wide" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>Ćao,</span>
+                <span className="text-4xl wave-emoji">👋</span>
+              </div>
+              {/* Katarina with minimal padding */}
+              <div className="text-5xl font-bold leading-tight text-white tracking-tight -mt-1" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '800' }}>
+                Katarina
+              </div>
             </div>
           </div>
-          <div className="bg-white/20 p-2 rounded-full backdrop-blur-sm">
-            <Settings className="w-5 h-5 text-white" />
+          {/* Hamburger Menu */}
+          <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm" style={{ height: '48px', width: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Menu className="w-6 h-6 text-white" />
           </div>
         </div>
 
-        {/* Rating */}
-        <div className="flex items-center space-x-2 mb-6">
+        {/* Rating with much less padding */}
+        <div className="flex items-center space-x-2 mb-6 mt-1">
           <Star className="w-4 h-4 fill-white text-white" />
-          <span className="text-base font-semibold tracking-tight">8.5</span>
-          <span className="text-sm font-normal opacity-90 tracking-wide">Tennis Camp, Kyiv</span>
+          <span className="text-base font-semibold tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '600' }}>47 rank</span>
+          <TrendingUp className="w-4 h-4 text-green-400" />
+        </div>
+
+        {/* Main Action Buttons */}
+        <div style={{ marginTop: '160px', marginBottom: '40px' }}>
+          <div className="space-y-4">
+            <button
+              onClick={handleTerenClick}
+              className="w-full bg-white/85 backdrop-blur-md border border-white/30 rounded-2xl p-5 shadow-2xl hover:bg-white/90 hover:shadow-3xl transition-all active:scale-98 group"
+            >
+              <div className="flex items-center space-x-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <MapPin className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="text-gray-900 font-bold text-xl tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>Pronađi Teren</div>
+                  <div className="text-gray-600 font-medium text-sm tracking-wide" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>Rezerviši terene u blizini</div>
+                </div>
+                <div className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={handleMecClick}
+              className="w-full bg-white/85 backdrop-blur-md border border-white/30 rounded-2xl p-5 shadow-2xl hover:bg-white/90 hover:shadow-3xl transition-all active:scale-98 group"
+            >
+              <div className="flex items-center space-x-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Zap className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="text-gray-900 font-bold text-xl tracking-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>Pronađi Meč</div>
+                  <div className="text-gray-600 font-medium text-sm tracking-wide" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '500' }}>Igraj protiv drugih igrača</div>
+                </div>
+                <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* Your Bookings */}
-        <div style={{ marginTop: '120px', marginBottom: '60px' }}>
-          <h2 className="text-3xl tracking-tight drop-shadow-sm mb-6">
+        <div style={{ marginBottom: '40px' }}>
+          <h2 className="text-3xl tracking-tight drop-shadow-sm mb-4" style={{ fontFamily: 'Inter, sans-serif', fontWeight: '700' }}>
             <span className="font-bold">Vaše</span>{' '}
-            <span className="font-light">Rezervacije</span>
+            <span className="font-light" style={{ fontWeight: '300' }}>Rezervacije</span>
           </h2>
           
           <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
@@ -72,42 +151,6 @@ export default function HomeScreen() {
           </div>
         </div>
       </div>
-
-      {/* FAB - Professional Design */}
-      <button
-        onClick={() => setShowFabModal(true)}
-        className="fixed bottom-28 right-6 w-16 h-16 bg-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:bg-gray-50 transition-all active:scale-95 border border-gray-100"
-      >
-        <Plus className="w-8 h-8 text-blue-600" />
-      </button>
-
-      {/* FAB Modal */}
-      {showFabModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-sm">
-            <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">Izaberite opciju</h3>
-            
-            <div className="space-y-4">
-              <button className="w-full bg-blue-600 text-white py-4 rounded-2xl font-semibold text-lg flex items-center justify-center space-x-3 hover:bg-blue-700 transition-all">
-                <span className="text-xl">🏟️</span>
-                <span>Pronađi Teren</span>
-              </button>
-              
-              <button className="w-full bg-green-600 text-white py-4 rounded-2xl font-semibold text-lg flex items-center justify-center space-x-3 hover:bg-green-700 transition-all">
-                <span className="text-xl">⚔️</span>
-                <span>Pronađi Meč</span>
-              </button>
-            </div>
-
-            <button
-              onClick={() => setShowFabModal(false)}
-              className="w-full mt-4 py-3 text-gray-500 font-medium"
-            >
-              Otkaži
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

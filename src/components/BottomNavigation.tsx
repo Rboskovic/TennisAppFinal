@@ -8,7 +8,7 @@ export default function BottomNavigation() {
   const tabs = [
     { id: 'home', label: 'Home', icon: Home, path: '/' },
     { id: 'players', label: 'Igrači', icon: Users, path: '/igraci' },
-    { id: 'tournaments', label: 'Turniri & Lige', icon: Trophy, path: '/turniri' },
+    { id: 'tournaments', label: 'Lige/Turniri', icon: Trophy, path: '/turniri' },
     { id: 'ranking', label: 'Ranking', icon: BarChart, path: '/ranking' },
     { id: 'messages', label: 'Poruke', icon: MessageCircle, path: '/poruke' },
   ];
@@ -24,13 +24,16 @@ export default function BottomNavigation() {
             <button
               key={tab.id}
               onClick={() => navigate(tab.path)}
-              className={`flex-1 py-2 px-1 flex flex-col items-center justify-center min-h-[60px] transition-colors ${
+              className={`flex-1 py-3 px-1 flex flex-col items-center justify-center transition-colors ${
                 isActive 
                   ? 'text-blue-600' 
                   : 'text-gray-500 hover:text-gray-700'
               }`}
+              style={{
+                minHeight: 'max(75px, calc(env(safe-area-inset-bottom) + 65px))'
+              }}
             >
-              <Icon className={`w-5 h-5 mb-1 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
+              <Icon className={`w-6 h-6 mb-1 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
               <span className={`text-xs font-medium leading-tight text-center ${
                 isActive ? 'text-blue-600' : 'text-gray-500'
               }`}>
