@@ -1,155 +1,211 @@
-import { ArrowLeft, Search, ChevronUp, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  Search,
+  ChevronDown,
+  MessageCircle,
+  Zap,
+} from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RankingScreen() {
-  const [selectedPeriod, setSelectedPeriod] = useState<'weekly' | 'alltime'>('weekly');
-  const [selectedCategory, setSelectedCategory] = useState<'svi' | 'muskarci' | 'zene' | 'klub'>('svi');
+  const [selectedScope, setSelectedScope] = useState<"svi" | "">("svi");
+  const [selectedCategory, setSelectedCategory] = useState<
+    "svi" | "muskarci" | "zene" | "klub"
+  >("svi");
   const [showClubDropdown, setShowClubDropdown] = useState(false);
-  const [selectedClub, setSelectedClub] = useState('');
+  const [selectedClub, setSelectedClub] = useState("");
+  const [showCount, setShowCount] = useState(10);
   const navigate = useNavigate();
 
   const clubs = [
-    'Teniski Klub Partizan',
-    'Teniski Klub Crvena Zvezda', 
-    'BK Baseline',
-    'TK Novak',
-    'TK As'
+    "Teniski Klub Partizan",
+    "Teniski Klub Crvena Zvezda",
+    "BK Baseline",
+    "TK Novak",
+    "TK As",
   ];
 
-  const players = [
-    { name: 'Novak Đoković', rank: 1, change: 0, nationality: 'SRB' },
-    { name: 'Aleksandar Vukic', rank: 2, change: 2, nationality: 'AUS' },
-    { name: 'Carlos Alcaraz', rank: 3, change: 1, nationality: 'ESP' },
-    { name: 'Albert Flores', rank: 4, change: 3, nationality: 'AUT' },
-    { name: 'Guy Hawkins', rank: 5, change: -1, nationality: 'ITS' },
-    { name: 'Wade Warren', rank: 6, change: 2, nationality: 'GER' },
-    { name: 'A. Pavlyuchenkova', rank: 7, change: 0, nationality: 'RUS' },
-    { name: 'A. Davidovich', rank: 8, change: 4, nationality: 'ESP' },
-    { name: 'P. Badosa', rank: 9, change: 1, nationality: 'ESP' },
-    { name: 'C. Alcaraz', rank: 10, change: 2, nationality: 'ESP' },
-    { name: 'Casper Ruud', rank: 11, change: 1, nationality: 'NOR' },
-    { name: 'Taylor Fritz', rank: 12, change: -1, nationality: 'USA' },
-    { name: 'Medvedev', rank: 13, change: -2, nationality: 'RUS' },
-    { name: 'Katarina Miković', rank: 47, change: 2, nationality: 'SRB', isCurrentUser: true },
+  const allPlayers = [
+    { name: "Novak Đoković", rank: 1, change: 0, nationality: "SRB" },
+    { name: "Aleksandar Vukic", rank: 2, change: 2, nationality: "AUS" },
+    { name: "Carlos Alcaraz", rank: 3, change: 1, nationality: "ESP" },
+    { name: "Albert Flores", rank: 4, change: 3, nationality: "AUT" },
+    { name: "Guy Hawkins", rank: 5, change: -1, nationality: "ITS" },
+    { name: "Wade Warren", rank: 6, change: 2, nationality: "GER" },
+    { name: "A. Pavlyuchenkova", rank: 7, change: 0, nationality: "RUS" },
+    { name: "A. Davidovich", rank: 8, change: 4, nationality: "ESP" },
+    { name: "P. Badosa", rank: 9, change: 1, nationality: "ESP" },
+    { name: "C. Alcaraz", rank: 10, change: 2, nationality: "ESP" },
+    { name: "Casper Ruud", rank: 11, change: 1, nationality: "NOR" },
+    { name: "Taylor Fritz", rank: 12, change: -1, nationality: "USA" },
+    { name: "Medvedev", rank: 13, change: -2, nationality: "RUS" },
+    { name: "Stefanos Tsitsipas", rank: 14, change: 1, nationality: "GRE" },
+    { name: "Jannik Sinner", rank: 15, change: 3, nationality: "ITA" },
+    { name: "Felix Auger-Aliassime", rank: 16, change: -2, nationality: "CAN" },
+    { name: "Andrey Rublev", rank: 17, change: 0, nationality: "RUS" },
+    { name: "Hubert Hurkacz", rank: 18, change: 1, nationality: "POL" },
+    { name: "Pablo Carreno Busta", rank: 19, change: -1, nationality: "ESP" },
+    { name: "Alexander Zverev", rank: 20, change: 2, nationality: "GER" },
+    { name: "Denis Shapovalov", rank: 21, change: -1, nationality: "CAN" },
+    { name: "Grigor Dimitrov", rank: 22, change: 3, nationality: "BUL" },
+    { name: "Karen Khachanov", rank: 23, change: 0, nationality: "RUS" },
+    { name: "Francisco Cerundolo", rank: 24, change: 2, nationality: "ARG" },
+    { name: "Lorenzo Musetti", rank: 25, change: -1, nationality: "ITA" },
+    {
+      name: "Katarina Miković",
+      rank: 47,
+      change: 2,
+      nationality: "SRB",
+      isCurrentUser: true,
+    },
   ];
+
+  // Filter players based on selected scope
+  const filteredPlayers =
+    selectedScope === "ja"
+      ? allPlayers.filter((player) => player.isCurrentUser)
+      : allPlayers;
+
+  const displayedPlayers = filteredPlayers.slice(0, showCount);
 
   const getChangeColor = (change: number) => {
-    if (change > 0) return 'text-emerald-600';
-    if (change < 0) return 'text-red-500';
-    return 'text-gray-500';
+    if (change > 0) return "text-emerald-600";
+    if (change < 0) return "text-red-500";
+    return "text-gray-500";
   };
 
   const getChangeText = (change: number) => {
     if (change > 0) return `+${change}`;
     if (change < 0) return change.toString();
-    return '0';
+    return "0";
+  };
+
+  const handleMessagePlayer = (playerName: string) => {
+    console.log(`Message ${playerName}`);
+  };
+
+  const handleChallengePlayer = (playerName: string) => {
+    console.log(`Challenge ${playerName}`);
+  };
+
+  const handlePlayerClick = (playerName: string) => {
+    console.log(`Open profile for ${playerName}`);
+  };
+
+  const handleShowMore = () => {
+    setShowCount((prev) => Math.min(prev + 10, filteredPlayers.length));
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-24">
       {/* Header with Tennis Balls Background */}
-      <div 
+      <div
         className="relative"
         style={{
           backgroundImage: `url('/images/tennis-balls.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-navy-900/60" style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)' }}></div>
-        
+        <div
+          className="absolute inset-0 bg-navy-900/60"
+          style={{ backgroundColor: "rgba(15, 23, 42, 0.6)" }}
+        ></div>
+
         {/* Header Content */}
         <div className="relative z-10 flex items-center justify-between px-4 py-3">
           <div className="flex items-center">
-            <button onClick={() => navigate('/')} className="mr-3">
+            <button onClick={() => navigate("/")} className="mr-3">
               <ArrowLeft className="w-6 h-6 text-white" />
             </button>
-            <h1 className="text-lg font-semibold text-white">Players & Rankings</h1>
+            <h1 className="text-lg font-semibold text-white">
+              Igrači i Ranking
+            </h1>
           </div>
           <Search className="w-6 h-6 text-white" />
         </div>
 
-        {/* Period Filter - Weekly/All Time */}
+        {/* Scope Filter - Svi/Ja */}
         <div className="relative z-10 px-4 pb-3">
           <div className="bg-white rounded-full p-1 flex shadow-lg max-w-xs">
             <button
-              onClick={() => setSelectedPeriod('weekly')}
+              onClick={() => setSelectedScope("svi")}
               className={`flex-1 py-2 px-4 rounded-full text-sm font-semibold transition-all ${
-                selectedPeriod === 'weekly'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-800'
+                selectedScope === "svi"
+                  ? "bg-emerald-600 text-white shadow-md"
+                  : "text-slate-600 hover:text-slate-800"
               }`}
             >
-              Weekly
+              Svi
             </button>
             <button
-              onClick={() => setSelectedPeriod('alltime')}
+              onClick={() => setSelectedScope("ja")}
               className={`flex-1 py-2 px-4 rounded-full text-sm font-semibold transition-all ${
-                selectedPeriod === 'alltime'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-800'
+                selectedScope === "ja"
+                  ? "bg-emerald-600 text-white shadow-md"
+                  : "text-slate-600 hover:text-slate-800"
               }`}
             >
-              All Time
+              Ja
             </button>
           </div>
         </div>
 
         {/* Category Filter */}
-        <div className="relative z-10 px-4 pb-4">
+        <div className="relative z-10 px-4 pb-3">
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => setSelectedCategory('svi')}
+              onClick={() => setSelectedCategory("svi")}
               className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
-                selectedCategory === 'svi'
-                  ? 'bg-white text-emerald-700 shadow-md'
-                  : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                selectedCategory === "svi"
+                  ? "bg-white text-emerald-700 shadow-md"
+                  : "bg-emerald-600 text-white hover:bg-emerald-700"
               }`}
             >
               Svi
             </button>
-            
+
             <button
-              onClick={() => setSelectedCategory('muskarci')}
+              onClick={() => setSelectedCategory("muskarci")}
               className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
-                selectedCategory === 'muskarci'
-                  ? 'bg-white text-emerald-700 shadow-md'
-                  : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                selectedCategory === "muskarci"
+                  ? "bg-white text-emerald-700 shadow-md"
+                  : "bg-emerald-600 text-white hover:bg-emerald-700"
               }`}
             >
               Muškarci
             </button>
-            
+
             <button
-              onClick={() => setSelectedCategory('zene')}
+              onClick={() => setSelectedCategory("zene")}
               className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
-                selectedCategory === 'zene'
-                  ? 'bg-white text-emerald-700 shadow-md'
-                  : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                selectedCategory === "zene"
+                  ? "bg-white text-emerald-700 shadow-md"
+                  : "bg-emerald-600 text-white hover:bg-emerald-700"
               }`}
             >
               Žene
             </button>
-            
+
             <div className="relative">
               <button
                 onClick={() => {
-                  setSelectedCategory('klub');
+                  setSelectedCategory("klub");
                   setShowClubDropdown(!showClubDropdown);
                 }}
                 className={`px-4 py-2 text-sm font-semibold rounded-full transition-all flex items-center space-x-2 ${
-                  selectedCategory === 'klub'
-                    ? 'bg-white text-emerald-700 shadow-md'
-                    : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                  selectedCategory === "klub"
+                    ? "bg-white text-emerald-700 shadow-md"
+                    : "bg-emerald-600 text-white hover:bg-emerald-700"
                 }`}
               >
-                <span>{selectedClub || 'Klub'}</span>
+                <span>{selectedClub || "Klub"}</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
-              
+
               {showClubDropdown && (
                 <div className="absolute top-full mt-1 left-0 bg-white rounded-2xl shadow-2xl py-2 min-w-48 z-20 border border-slate-200">
                   {clubs.map((club) => (
@@ -172,77 +228,110 @@ export default function RankingScreen() {
       </div>
 
       {/* Table Headers */}
-      <div className="px-4 py-3 bg-slate-100 border-b border-slate-200">
+      <div className="px-4 py-4 bg-emerald-50 border-b border-emerald-100">
         <div className="flex items-center">
           <div className="flex-1">
-            <div className="flex items-center">
-              <span className="text-xs font-semibold text-slate-700">Name</span>
-              <ChevronUp className="w-3 h-3 text-slate-600 ml-1" />
-            </div>
+            <span className="text-sm font-bold text-emerald-800">Ime</span>
           </div>
-          <div className="w-16 text-center">
-            <span className="text-xs font-semibold text-slate-700">RNK</span>
+          <div className="w-20 text-center">
+            <span className="text-sm font-bold text-emerald-800">Pozicija</span>
           </div>
-          <div className="w-16 text-center">
-            <div className="flex items-center justify-center">
-              <span className="text-xs font-semibold text-slate-700">Change</span>
-              <ChevronUp className="w-3 h-3 text-slate-600 ml-1" />
-            </div>
+          <div className="w-20 text-center">
+            <span className="text-sm font-bold text-emerald-800">Promena</span>
           </div>
-          <div className="w-12 text-center">
-            <div className="flex items-center justify-center">
-              <span className="text-xs font-semibold text-slate-700">Natl</span>
-              <ChevronUp className="w-3 h-3 text-slate-600 ml-1" />
-            </div>
+          <div className="w-24 text-center">
+            <span className="text-sm font-bold text-emerald-800">Akcije</span>
           </div>
         </div>
       </div>
 
       {/* Player List */}
       <div className="bg-white">
-        {players.map((player, index) => (
+        {displayedPlayers.map((player, index) => (
           <div
             key={index}
-            className={`px-4 py-3 border-b border-slate-100 ${
-              player.isCurrentUser ? 'bg-amber-50 border-amber-200' : 'hover:bg-slate-50'
+            className={`px-4 py-4 border-b border-slate-100 ${
+              player.isCurrentUser
+                ? "bg-amber-50 border-amber-200"
+                : "hover:bg-slate-50"
             }`}
           >
             <div className="flex items-center">
               {/* Name */}
-              <div className="flex-1">
-                <span className={`text-sm font-semibold ${
-                  player.isCurrentUser ? 'text-amber-700' : 'text-slate-900'
-                }`}>
+              <div className="flex-1 min-w-0">
+                <button
+                  onClick={() => handlePlayerClick(player.name)}
+                  className={`text-left text-sm font-semibold hover:underline transition-colors truncate block w-full ${
+                    player.isCurrentUser
+                      ? "text-amber-700"
+                      : "text-slate-900 hover:text-emerald-600"
+                  }`}
+                  title={player.name}
+                >
                   {player.name}
                   {player.isCurrentUser && (
-                    <span className="text-amber-600 text-xs ml-2 font-medium">(Vi)</span>
+                    <span className="text-amber-600 text-xs ml-2 font-medium">
+                      (Vi)
+                    </span>
                   )}
-                </span>
+                </button>
               </div>
-              
+
               {/* Rank */}
-              <div className="w-16 text-center">
+              <div className="w-20 text-center">
                 <span className="text-sm font-bold text-slate-900">
                   #{player.rank}
                 </span>
               </div>
-              
+
               {/* Change */}
-              <div className="w-16 text-center">
-                <span className={`text-sm font-bold ${getChangeColor(player.change)}`}>
+              <div className="w-20 text-center">
+                <span
+                  className={`text-sm font-bold ${getChangeColor(
+                    player.change
+                  )}`}
+                >
                   {getChangeText(player.change)}
                 </span>
               </div>
-              
-              {/* Nationality */}
-              <div className="w-12 text-center">
-                <span className="text-xs font-medium text-slate-600">
-                  {player.nationality}
-                </span>
+
+              {/* Action Buttons */}
+              <div className="w-24 flex items-center justify-center space-x-2">
+                {!player.isCurrentUser && (
+                  <>
+                    <button
+                      onClick={() => handleMessagePlayer(player.name)}
+                      className="p-2 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-600 transition-colors"
+                      title="Pošalji poruku"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      onClick={() => handleChallengePlayer(player.name)}
+                      className="p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 transition-colors"
+                      title="Pozovi na meč"
+                    >
+                      <Zap className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
         ))}
+
+        {/* Show More Button - Slightly Bigger */}
+        {showCount < filteredPlayers.length && (
+          <div className="px-4 py-4 text-center bg-white border-t border-slate-100">
+            <button
+              onClick={handleShowMore}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-full transition-colors shadow-md text-sm"
+            >
+              Pogledaj još ({filteredPlayers.length - showCount} preostalo)
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
