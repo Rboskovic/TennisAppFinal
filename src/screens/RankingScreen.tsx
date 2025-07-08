@@ -10,9 +10,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function RankingScreen() {
   const [selectedScope, setSelectedScope] = useState<"svi" | "">("svi");
-  const [selectedCategory, setSelectedCategory] = useState<
-    "svi" | "muskarci" | "zene" | "klub"
-  >("svi");
+  const [selectedGameType, setSelectedGameType] = useState<"singl" | "dubl">("singl");
+  const [showGameTypeDropdown, setShowGameTypeDropdown] = useState(false);
   const [showClubDropdown, setShowClubDropdown] = useState(false);
   const [selectedClub, setSelectedClub] = useState("");
   const [showCount, setShowCount] = useState(10);
@@ -128,9 +127,9 @@ export default function RankingScreen() {
           <Search className="w-6 h-6 text-white" />
         </div>
 
-        {/* Scope Filter - Svi/Ja */}
+        {/* Scope Filter - Svi/Moj Rejting */}
         <div className="relative z-10 px-4 pb-3">
-          <div className="bg-white rounded-full p-1 flex shadow-lg max-w-xs">
+          <div className="bg-white rounded-full p-1 flex shadow-lg w-4/5 max-w-sm">
             <button
               onClick={() => setSelectedScope("svi")}
               className={`flex-1 py-2 px-4 rounded-full text-sm font-semibold transition-all ${
@@ -149,61 +148,63 @@ export default function RankingScreen() {
                   : "text-slate-600 hover:text-slate-800"
               }`}
             >
-              Ja
+              Moj Rejting
             </button>
           </div>
         </div>
 
         {/* Category Filter */}
         <div className="relative z-10 px-4 pb-3">
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setSelectedCategory("svi")}
-              className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
-                selectedCategory === "svi"
-                  ? "bg-white text-emerald-700 shadow-md"
-                  : "bg-emerald-600 text-white hover:bg-emerald-700"
-              }`}
-            >
-              Svi
-            </button>
+          <div className="flex items-center space-x-2 w-4/5 max-w-sm">
+            {/* Singles/Doubles Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowGameTypeDropdown(!showGameTypeDropdown)}
+                className="bg-emerald-600 text-white px-3 py-2 text-sm font-semibold rounded-full transition-all flex items-center space-x-1 hover:bg-emerald-700"
+              >
+                <span>{selectedGameType === "singl" ? "Singl" : "Dubl"}</span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
 
-            <button
-              onClick={() => setSelectedCategory("muskarci")}
-              className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
-                selectedCategory === "muskarci"
-                  ? "bg-white text-emerald-700 shadow-md"
-                  : "bg-emerald-600 text-white hover:bg-emerald-700"
-              }`}
-            >
+              {showGameTypeDropdown && (
+                <div className="absolute top-full mt-1 left-0 bg-white rounded-2xl shadow-2xl py-2 min-w-32 z-20 border border-slate-200">
+                  <button
+                    onClick={() => {
+                      setSelectedGameType("singl");
+                      setShowGameTypeDropdown(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-emerald-50 transition-colors"
+                  >
+                    Singl
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedGameType("dubl");
+                      setShowGameTypeDropdown(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-emerald-50 transition-colors"
+                  >
+                    Dubl
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <button className="bg-emerald-600 text-white px-3 py-2 text-sm font-semibold rounded-full transition-all hover:bg-emerald-700">
               Muškarci
             </button>
 
-            <button
-              onClick={() => setSelectedCategory("zene")}
-              className={`px-4 py-2 text-sm font-semibold rounded-full transition-all ${
-                selectedCategory === "zene"
-                  ? "bg-white text-emerald-700 shadow-md"
-                  : "bg-emerald-600 text-white hover:bg-emerald-700"
-              }`}
-            >
+            <button className="bg-emerald-600 text-white px-3 py-2 text-sm font-semibold rounded-full transition-all hover:bg-emerald-700">
               Žene
             </button>
 
             <div className="relative">
               <button
-                onClick={() => {
-                  setSelectedCategory("klub");
-                  setShowClubDropdown(!showClubDropdown);
-                }}
-                className={`px-4 py-2 text-sm font-semibold rounded-full transition-all flex items-center space-x-2 ${
-                  selectedCategory === "klub"
-                    ? "bg-white text-emerald-700 shadow-md"
-                    : "bg-emerald-600 text-white hover:bg-emerald-700"
-                }`}
+                onClick={() => setShowClubDropdown(!showClubDropdown)}
+                className="bg-emerald-600 text-white px-3 py-2 text-sm font-semibold rounded-full transition-all flex items-center space-x-1 hover:bg-emerald-700"
               >
                 <span>{selectedClub || "Klub"}</span>
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-3 h-3" />
               </button>
 
               {showClubDropdown && (
@@ -227,8 +228,8 @@ export default function RankingScreen() {
         </div>
       </div>
 
-      {/* Table Headers */}
-      <div className="px-4 py-4 bg-emerald-50 border-b border-emerald-100">
+      {/* Table Headers - Reduced padding */}
+      <div className="px-4 py-2 bg-emerald-50 border-b border-emerald-100">
         <div className="flex items-center">
           <div className="flex-1">
             <span className="text-sm font-bold text-emerald-800">Ime</span>
