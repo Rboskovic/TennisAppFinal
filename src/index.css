@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .perspective-500 {
+    perspective: 500px;
+  }
+  
+  .transform-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .skew-y-2 {
+    transform: skewY(2deg);
+  }
+  
+  .-skew-y-2 {
+    transform: skewY(-2deg);
+  }
+}

@@ -1,12 +1,10 @@
 import { Star, Menu, MapPin, Zap, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BookingCard from '../components/BookingCard';
-import RankingModal from '../components/RankingModal';
 import { currentUser, userBookings } from '../data/mockData';
-import { rankingData } from '../data/rankingData';
 
 export default function HomeScreen() {
-  const [showRankingModal, setShowRankingModal] = useState(false);
+  const navigate = useNavigate();
 
   const handleTerenClick = () => {
     console.log('Pronađi Teren clicked');
@@ -19,7 +17,7 @@ export default function HomeScreen() {
   };
 
   const handleRankClick = () => {
-    setShowRankingModal(true);
+    navigate('/ranking');
   };
 
   return (
@@ -100,7 +98,7 @@ export default function HomeScreen() {
           </div>
         </div>
 
-        {/* Rating - Now Clickable */}
+        {/* Rating - Now Navigates to Ranking Screen */}
         <button 
           onClick={handleRankClick}
           className="flex items-center space-x-2 mb-4 hover:bg-white/10 rounded-xl p-2 -ml-2 transition-all"
@@ -169,13 +167,6 @@ export default function HomeScreen() {
           </div>
         </div>
       </div>
-
-      {/* Ranking Modal */}
-      <RankingModal 
-        isOpen={showRankingModal} 
-        onClose={() => setShowRankingModal(false)}
-        rankings={rankingData}
-      />
     </div>
   );
 }
