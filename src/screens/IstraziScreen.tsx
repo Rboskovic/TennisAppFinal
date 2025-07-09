@@ -4,19 +4,19 @@ const categories = [
   {
     id: 1,
     name: "Reketi",
-    bgColor: "bg-blue-600",
+    bgColor: "bg-emerald-300",
     image: "/images/raquet.png",
   },
   {
     id: 2,
     name: "Loptice",
-    bgColor: "bg-lime-500", 
+    bgColor: "bg-emerald-400", 
     image: "/images/tennis-balls-packaging.png",
   },
   {
     id: 3,
     name: "Patike",
-    bgColor: "bg-gray-500",
+    bgColor: "bg-emerald-500",
     image: "/images/shoes.png",
   },
   {
@@ -28,7 +28,7 @@ const categories = [
   {
     id: 5,
     name: "Treneri",
-    bgColor: "bg-purple-100",
+    bgColor: "bg-emerald-700",
     image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cdefs%3E%3ClinearGradient id='trainer' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23a78bfa;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%237c3aed;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='30' cy='20' r='8' fill='url(%23trainer)'/%3E%3Cpath d='M18 35c0-6.627 5.373-12 12-12s12 5.373 12 12v10H18V35z' fill='url(%23trainer)'/%3E%3Cpath d='M25 45l5-8 5 8' fill='%235b21b6'/%3E%3C/svg%3E",
   },
 ];
@@ -70,22 +70,127 @@ export default function IstraziScreen() {
 
       {/* Categories Row - Scrollable like Wolt */}
       <div className="px-4 pt-4">
-        <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-gray-900">
+            SHOP
+          </h3>
+          <button className="bg-gray-100 text-cyan-500 font-semibold py-2 px-4 rounded-full text-xs">
+            Prikaži sve
+          </button>
+        </div>
+
+        {/* Discount Equipment Section */}
+        <div className="bg-cyan-100 rounded-2xl p-4">
+          <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2 mb-4">
+            <span>Oprema na popustu</span>
+            <span className="text-2xl">🛒</span>
+            <span className="text-2xl">%</span>
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">149,99 RSD <span className="line-through text-gray-400 font-normal">329,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Wilson reketi sa popustom</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">549,00 RSD <span className="line-through text-gray-400 font-normal">1.609,0</span></div>
+              <div className="text-gray-700 text-xs mt-1">Nike patike za tenis</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">129,00 RSD <span className="line-through text-gray-400 font-normal">257,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Loptice Head Pro 3/1</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">359,99 RSD <span className="line-through text-gray-400 font-normal">549,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Torba Wilson Pro Staff</div>
+            </div>
+          </div>
+          
+          <button className="w-full bg-white text-cyan-600 font-semibold py-3 rounded-xl border border-cyan-200">
+            Istražite ponude
+          </button>
+        </div>
+
+
+        <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
           {categories.map((category) => (
             <div key={category.id} className="flex-shrink-0 text-center" style={{ width: '70px' }}>
-              <div className={`w-16 h-16 ${category.bgColor} rounded-2xl flex items-center justify-center mb-2 shadow-sm`}>
+              <div className={`w-16 h-16 ${category.bgColor} rounded-2xl flex items-center justify-center mb-1 shadow-sm`}>
                 <img 
                   src={category.image}
                   alt={category.name}
-                  className="w-10 h-10 object-contain"
+                  className="w-11 h-11 object-contain"
                 />
               </div>
-              <span className="text-sm font-medium text-gray-900 leading-tight">
+              <span className="text-sm font-semibold text-gray-900 leading-tight block text-center mt-1">
                 {category.name}
               </span>
             </div>
           ))}
         </div>
+
+        {/* Discount Equipment Section */}
+        <div className="bg-cyan-100 rounded-2xl p-4">
+          <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2 mb-4">
+            <span>Oprema na popustu</span>
+            <span className="text-2xl">🛒</span>
+            <span className="text-2xl">%</span>
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">149,99 RSD <span className="line-through text-gray-400 font-normal">329,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Wilson reketi sa popustom</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">549,00 RSD <span className="line-through text-gray-400 font-normal">1.609,0</span></div>
+              <div className="text-gray-700 text-xs mt-1">Nike patike za tenis</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">129,00 RSD <span className="line-through text-gray-400 font-normal">257,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Loptice Head Pro 3/1</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">359,99 RSD <span className="line-through text-gray-400 font-normal">549,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Torba Wilson Pro Staff</div>
+            </div>
+          </div>
+          
+          <button className="w-full bg-white text-cyan-600 font-semibold py-3 rounded-xl border border-cyan-200">
+            Istražite ponude
+          </button>
+        </div>
+
       </div>
 
       {/* Hero Banner - Scrollable */}
@@ -125,6 +230,54 @@ export default function IstraziScreen() {
             </div>
           </div>
         </div>
+
+        {/* Discount Equipment Section */}
+        <div className="bg-cyan-100 rounded-2xl p-4">
+          <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2 mb-4">
+            <span>Oprema na popustu</span>
+            <span className="text-2xl">🛒</span>
+            <span className="text-2xl">%</span>
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">149,99 RSD <span className="line-through text-gray-400 font-normal">329,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Wilson reketi sa popustom</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">549,00 RSD <span className="line-through text-gray-400 font-normal">1.609,0</span></div>
+              <div className="text-gray-700 text-xs mt-1">Nike patike za tenis</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">129,00 RSD <span className="line-through text-gray-400 font-normal">257,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Loptice Head Pro 3/1</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">359,99 RSD <span className="line-through text-gray-400 font-normal">549,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Torba Wilson Pro Staff</div>
+            </div>
+          </div>
+          
+          <button className="w-full bg-white text-cyan-600 font-semibold py-3 rounded-xl border border-cyan-200">
+            Istražite ponude
+          </button>
+        </div>
+
         
         {/* Dots indicator */}
         <div className="flex justify-center mt-3 space-x-2">
@@ -133,6 +286,54 @@ export default function IstraziScreen() {
           <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
           <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
         </div>
+
+        {/* Discount Equipment Section */}
+        <div className="bg-cyan-100 rounded-2xl p-4">
+          <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2 mb-4">
+            <span>Oprema na popustu</span>
+            <span className="text-2xl">🛒</span>
+            <span className="text-2xl">%</span>
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">149,99 RSD <span className="line-through text-gray-400 font-normal">329,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Wilson reketi sa popustom</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">549,00 RSD <span className="line-through text-gray-400 font-normal">1.609,0</span></div>
+              <div className="text-gray-700 text-xs mt-1">Nike patike za tenis</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">129,00 RSD <span className="line-through text-gray-400 font-normal">257,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Loptice Head Pro 3/1</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">359,99 RSD <span className="line-through text-gray-400 font-normal">549,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Torba Wilson Pro Staff</div>
+            </div>
+          </div>
+          
+          <button className="w-full bg-white text-cyan-600 font-semibold py-3 rounded-xl border border-cyan-200">
+            Istražite ponude
+          </button>
+        </div>
+
       </div>
 
       <div className="px-4 space-y-5 pt-6">
@@ -169,24 +370,161 @@ export default function IstraziScreen() {
           </div>
         </div>
 
-        {/* Best Courts Section - Smaller fonts */}
+        {/* Discount Equipment Section */}
+        <div className="bg-cyan-100 rounded-2xl p-4">
+          <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2 mb-4">
+            <span>Oprema na popustu</span>
+            <span className="text-2xl">🛒</span>
+            <span className="text-2xl">%</span>
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">149,99 RSD <span className="line-through text-gray-400 font-normal">329,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Wilson reketi sa popustom</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">549,00 RSD <span className="line-through text-gray-400 font-normal">1.609,0</span></div>
+              <div className="text-gray-700 text-xs mt-1">Nike patike za tenis</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">129,00 RSD <span className="line-through text-gray-400 font-normal">257,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Loptice Head Pro 3/1</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">359,99 RSD <span className="line-through text-gray-400 font-normal">549,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Torba Wilson Pro Staff</div>
+            </div>
+          </div>
+          
+          <button className="w-full bg-white text-cyan-600 font-semibold py-3 rounded-xl border border-cyan-200">
+            Istražite ponude
+          </button>
+        </div>
+
+
+        {/* Tennis Clubs Section - Wolt Style */}
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-gray-900">
-              Najbolji tereni u gradu...
+              Najbolji klubovi u gradu
             </h3>
             <button className="bg-gray-100 text-cyan-500 font-semibold py-2 px-4 rounded-full text-xs">
               Prikaži sve
             </button>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-sm h-32 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-3xl mb-2">🎾</div>
-              <span className="text-gray-500 text-sm">Tereni će biti dodani uskoro</span>
+          <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
+            {/* Club 1 */}
+            <div className="bg-white rounded-2xl shadow-sm flex-shrink-0 w-80">
+              <div className="h-32 bg-emerald-600 rounded-t-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-emerald-500"></div>
+                <div className="absolute bottom-3 left-3 text-white">
+                  <div className="text-lg font-bold">Baseline Tennis Club</div>
+                </div>
+              </div>
+              <div className="p-3">
+                <div className="text-sm text-gray-600 mb-2">Premium tereni • Sponzorisano</div>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center space-x-3">
+                    <span className="font-semibold">2.500 RSD</span>
+                    <span>15-20 minuta</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <span>⭐</span>
+                    <span className="font-semibold">9.2</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Club 2 */}
+            <div className="bg-white rounded-2xl shadow-sm flex-shrink-0 w-80">
+              <div className="h-32 bg-blue-600 rounded-t-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500"></div>
+                <div className="absolute bottom-3 left-3 text-white">
+                  <div className="text-lg font-bold">TK Partizan</div>
+                </div>
+              </div>
+              <div className="p-3">
+                <div className="text-sm text-gray-600 mb-2">Profesionalni tereni • Klub</div>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center space-x-3">
+                    <span className="font-semibold">3.000 RSD</span>
+                    <span>20-25 minuta</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <span>⭐</span>
+                    <span className="font-semibold">9.5</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Discount Equipment Section */}
+        <div className="bg-cyan-100 rounded-2xl p-4">
+          <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2 mb-4">
+            <span>Oprema na popustu</span>
+            <span className="text-2xl">🛒</span>
+            <span className="text-2xl">%</span>
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">149,99 RSD <span className="line-through text-gray-400 font-normal">329,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Wilson reketi sa popustom</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">549,00 RSD <span className="line-through text-gray-400 font-normal">1.609,0</span></div>
+              <div className="text-gray-700 text-xs mt-1">Nike patike za tenis</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">129,00 RSD <span className="line-through text-gray-400 font-normal">257,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Loptice Head Pro 3/1</div>
+            </div>
+            
+            <div className="bg-white rounded-xl p-3">
+              <div className="h-20 bg-gray-100 rounded-lg mb-2 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">Slika</span>
+              </div>
+              <div className="text-red-500 font-bold text-sm">359,99 RSD <span className="line-through text-gray-400 font-normal">549,99</span></div>
+              <div className="text-gray-700 text-xs mt-1">Torba Wilson Pro Staff</div>
+            </div>
+          </div>
+          
+          <button className="w-full bg-white text-cyan-600 font-semibold py-3 rounded-xl border border-cyan-200">
+            Istražite ponude
+          </button>
+        </div>
+
 
         {/* Bottom spacing */}
         <div className="h-4"></div>
