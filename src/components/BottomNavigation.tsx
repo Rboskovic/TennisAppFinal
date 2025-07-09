@@ -1,4 +1,4 @@
-import { Home, Users, Trophy, BarChart, MessageCircle } from 'lucide-react';
+import { Home, Search, Trophy, BarChart, MessageCircle } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function BottomNavigation() {
@@ -7,7 +7,7 @@ export default function BottomNavigation() {
 
   const tabs = [
     { id: 'home', label: 'Home', icon: Home, path: '/' },
-    { id: 'players', label: 'Igrači', icon: Users, path: '/igraci' },
+    { id: 'istrazi', label: 'Istraži', icon: Search, path: '/istrazi' },
     { id: 'tournaments', label: 'Lige/Turniri', icon: Trophy, path: '/turniri' },
     { id: 'ranking', label: 'Ranking', icon: BarChart, path: '/ranking' },
     { id: 'messages', label: 'Poruke', icon: MessageCircle, path: '/poruke' },
