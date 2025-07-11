@@ -117,7 +117,7 @@ export default function IstraziScreen() {
         </div>
       </div>
 
-      {/* Hero Banner - Scrollable */}
+      {/* Hero Banner - Baseline GIF */}
       <div className="px-4 pt-4">
         <div
           className="relative overflow-hidden rounded-2xl shadow-lg"
@@ -126,40 +126,26 @@ export default function IstraziScreen() {
           <div
             className="absolute inset-0"
             style={{
-              background:
-                "linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%)",
+              backgroundImage: 'url("/videos/baseline.gif")',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
             }}
           >
             {/* Discount Badge */}
-            <div className="absolute top-3 right-3 bg-cyan-400 text-gray-900 font-bold py-1.5 px-3 rounded-lg">
-              <span className="text-xs font-bold">-30%</span>
-            </div>
 
-            {/* Better tennis illustration */}
-            <div className="absolute right-4 bottom-2 opacity-20">
-              <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                <circle cx="40" cy="40" r="30" fill="white" opacity="0.3" />
-                <circle cx="40" cy="40" r="18" fill="white" opacity="0.5" />
-                <path
-                  d="M15 40a25 25 0 0 1 50 0M40 15a25 25 0 0 1 0 50"
-                  stroke="white"
-                  strokeWidth="2"
-                  opacity="0.4"
-                />
-              </svg>
-            </div>
-
-            {/* Content - Smaller fonts */}
+            {/* Content - Text overlay */}
             <div className="relative z-10 p-4 h-full flex flex-col justify-between">
               <div></div>
               <div>
                 <h2 className="text-white text-2xl font-bold leading-tight mb-1">
-                  Tennis Pro
+                  Baseline
                 </h2>
-                <p className="text-white/90 text-sm">
-                  Profesionalna oprema za sve nivoe
-                </p>
+                <p className="text-white/90 text-sm">Od 1500 rsd</p>
               </div>
+            </div>
+            <div className="absolute top-3 right-3 bg-cyan-400 text-gray-900 font-bold py-1.5 px-3 rounded-lg">
+              <span className="text-xs font-bold">-30%</span>
             </div>
           </div>
         </div>
@@ -212,7 +198,7 @@ export default function IstraziScreen() {
           </div>
         </div>
 
-        {/* Tennis Clubs Section - Wolt Style */}
+        {/* Tennis Clubs Section - Updated with Images */}
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-gray-900">
@@ -224,12 +210,17 @@ export default function IstraziScreen() {
           </div>
 
           <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
-            {/* Club 1 */}
+            {/* Club 1 - Baseline */}
             <div className="bg-white rounded-2xl shadow-sm flex-shrink-0 w-80">
-              <div className="h-32 bg-emerald-600 rounded-t-2xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-emerald-500"></div>
+              <div className="h-32 rounded-t-2xl relative overflow-hidden">
+                <img
+                  src="/images/base_kompres-min.jpg"
+                  alt="Baseline Tennis Club"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/20"></div>
                 <div className="absolute bottom-3 left-3 text-white">
-                  <div className="text-lg font-bold">Baseline Tennis Club</div>
+                  <div className="text-lg font-bold">Baseline</div>
                 </div>
               </div>
               <div className="p-3">
@@ -249,12 +240,17 @@ export default function IstraziScreen() {
               </div>
             </div>
 
-            {/* Club 2 */}
+            {/* Club 2 - Tipsarevic */}
             <div className="bg-white rounded-2xl shadow-sm flex-shrink-0 w-80">
-              <div className="h-32 bg-blue-600 rounded-t-2xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500"></div>
+              <div className="h-32 rounded-t-2xl relative overflow-hidden">
+                <img
+                  src="/images/teniski-centar-novak.jpg"
+                  alt="Tipsarevic Tennis Club"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/20"></div>
                 <div className="absolute bottom-3 left-3 text-white">
-                  <div className="text-lg font-bold">TK Partizan</div>
+                  <div className="text-lg font-bold">Tipsarevic</div>
                 </div>
               </div>
               <div className="p-3">
