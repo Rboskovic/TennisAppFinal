@@ -11,8 +11,7 @@ export default function HomeScreen() {
   };
 
   const handleMecClick = () => {
-    console.log("Pronađi Meč clicked");
-    // TODO: Navigate to match finding
+    navigate("/find-match");
   };
 
   const handleRankClick = () => {

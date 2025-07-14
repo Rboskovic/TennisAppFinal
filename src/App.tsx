@@ -3,6 +3,7 @@ import HomeScreen from "./screens/HomeScreen";
 import RankingScreen from "./screens/RankingScreen";
 import IstraziScreen from "./screens/IstraziScreen";
 import CourtBookingScreen from "./screens/CourtBookingScreen";
+import FindMatchScreen from "./screens/FindMatchScreen";
 import VenueDetailsScreen from "./screens/VenueDetailsScreen"; // ADD THIS LINE
 import BottomNavigation from "./components/BottomNavigation";
 
@@ -44,6 +45,7 @@ function App() {
           <Route path="/ranking" element={<RankingScreen />} />
           <Route path="/poruke" element={<PorukeScreen />} />
           <Route path="/court-booking" element={<CourtBookingScreen />} />
+          <Route path="/find-match" element={<FindMatchScreen />} />
           <Route
             path="/court-details/:venueId"
             element={<VenueDetailsScreen />}

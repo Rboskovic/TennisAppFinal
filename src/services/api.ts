@@ -210,3 +210,21 @@ export function useRealtimeUpdates() {
     isConnected: tennisAPI.isConnected(),
   };
 }
+
+export const getAggregatedAvailability = async (clubId: string, date: string) => {
+  try {
+    console.log(`🔍 Fetching aggregated availability for ${clubId} on ${date}`);
+    const response = await fetch(`${API_BASE_URL}/availability-aggregated/${clubId}/${date}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log(`📊 Received ${data.length} aggregated time slots`);
+    return data;
+  } catch (error) {
+    console.error("Error fetching aggregated availability:", error);
+    throw error;
+  }
+};

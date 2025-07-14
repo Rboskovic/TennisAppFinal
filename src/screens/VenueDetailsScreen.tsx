@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft, Star, MapPin, Clock, Users, CreditCard } from "lucide-react";
 
 interface Court {
   id: string;
@@ -15,171 +15,260 @@ export default function VenueDetailsScreen() {
   const location = useLocation();
   const { venue, date, timeSlots, totalPrice } = location.state || {};
 
-  const [selectedCourt, setSelectedCourt] = useState("B2");
+  const [selectedCourt, setSelectedCourt] = useState("baseline_1");
   const [courtType, setCourtType] = useState<"indoor" | "outdoor">("indoor");
+  const [playerName, setPlayerName] = useState("Katarina");
+  const [playerPhone, setPlayerPhone] = useState("");
 
   const courts: Court[] = [
-    { id: "A1", name: "A1", type: "indoor", available: true },
-    { id: "B1", name: "B1", type: "indoor", available: true },
-    { id: "B2", name: "B2", type: "indoor", available: true, featured: true },
-    { id: "B3", name: "B3", type: "outdoor", available: true },
-    { id: "C1", name: "C1", type: "indoor", available: false },
+    { id: "baseline_1", name: "Teren 1", type: "indoor", available: true, featured: true },
+    { id: "baseline_2", name: "Teren 2", type: "indoor", available: true },
+    { id: "baseline_3", name: "Teren 3", type: "outdoor", available: true },
+    { id: "baseline_4", name: "Teren 4", type: "outdoor", available: true },
+    { id: "baseline_5", name: "Teren 5", type: "indoor", available: false },
   ];
 
-  const filteredCourts = courts.filter((court) => court.type === courtType);
+  const filteredCourts = courts.filter((court) => court.type === courtType && court.available);
 
-  const handleMakeReservation = () => {
-    console.log("Making reservation:", {
-      venue,
-      court: selectedCourt,
-      date,
-      timeSlots,
-      totalPrice,
-      courtType,
-    });
-    navigate("/");
+  const handleMakeReservation = async () => {
+    try {
+      console.log("Making reservation:", {
+        venue,
+        court: selectedCourt,
+        date,
+        timeSlots,
+        totalPrice,
+        courtType,
+        playerName,
+        playerPhone
+      });
+      
+      alert(`Rezervacija uspešna!\nTeren: ${selectedCourt}\nCena: ${totalPrice} RSD`);
+      navigate("/");
+    } catch (error) {
+      console.error("Booking failed:", error);
+      alert("Greška pri rezervaciji. Pokušajte ponovo.");
+    }
   };
 
-  const handleBookLesson = () => {
-    console.log("Booking lesson...");
+  const getDateDisplay = (dateId: string) => {
+    if (dateId === "today") return "Danas";
+    if (dateId === "tomorrow") return "Sutra";
+    return dateId;
   };
 
-  return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image - Full Screen Tennis Court */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url('/images/base_kompres-min.jpg')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/50"></div>
-      </div>
-
-      {/* Header Controls */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-20">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center"
-        >
-          <ArrowLeft className="w-5 h-5 text-white" />
-        </button>
-        <div className="w-10 h-10 bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center">
-          <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-        </div>
-      </div>
-
-      {/* Venue Info */}
-      <div className="absolute top-20 left-4 z-20">
-        <h1 className="text-white text-2xl font-bold mb-1">Tennis court</h1>
-        <p className="text-white/90 text-lg">{venue?.name || "Baseline"}</p>
-      </div>
-
-      {/* Top 10 Badge */}
-      <div className="absolute top-24 right-4 z-20">
-        <div className="bg-emerald-500 px-3 py-1 rounded-full">
-          <span className="text-white text-sm font-semibold">Top 10</span>
-        </div>
-      </div>
-
-      {/* Bottom Content Card */}
-      <div
-        className="absolute bottom-0 left-0 right-0 bg-gray-900 rounded-t-3xl z-10"
-        style={{ height: "70%" }}
-      >
-        <div className="p-6">
-          {/* Court Selection Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-white text-xl font-semibold">
-              Izaberite teren
-            </h2>
-
-            {/* Indoor/Outdoor Toggle */}
-            <div className="flex bg-gray-800 rounded-lg p-1">
-              <button
-                onClick={() => setCourtType("indoor")}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  courtType === "indoor"
-                    ? "bg-gray-700 text-white"
-                    : "text-gray-400"
-                }`}
-              >
-                A/C Indoor
-              </button>
-              <button
-                onClick={() => setCourtType("outdoor")}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  courtType === "outdoor"
-                    ? "bg-gray-700 text-white"
-                    : "text-gray-400"
-                }`}
-              >
-                B outdoor
-              </button>
-            </div>
-          </div>
-
-          {/* Court Grid */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            {filteredCourts.map((court) => (
-              <button
-                key={court.id}
-                onClick={() => court.available && setSelectedCourt(court.id)}
-                disabled={!court.available}
-                className={`aspect-square rounded-2xl flex items-center justify-center text-xl font-bold transition-all relative ${
-                  selectedCourt === court.id
-                    ? "bg-emerald-500 text-white ring-2 ring-emerald-400"
-                    : court.available
-                    ? "bg-gray-800 text-white hover:bg-gray-700"
-                    : "bg-gray-700 text-gray-500 cursor-not-allowed"
-                }`}
-              >
-                {court.name}
-                {court.featured && selectedCourt === court.id && (
-                  <Star className="w-4 h-4 absolute top-2 right-2 text-yellow-400 fill-current" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Book Lesson Section */}
-          <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 mb-6 relative overflow-hidden">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                <div className="text-white text-2xl">🎾</div>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-white font-bold text-lg mb-1">
-                  Rezervišite čas sa trenerom
-                </h3>
-                <p className="text-white/90 text-sm mb-3">
-                  Igrajte sa najboljim trenerima
-                </p>
-                <button
-                  onClick={handleBookLesson}
-                  className="bg-emerald-500 text-white px-6 py-2 rounded-full font-semibold text-sm hover:bg-emerald-600 transition-colors"
-                >
-                  Rezervišite termin
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Make Reservation Button */}
-          <button
-            onClick={handleMakeReservation}
-            className="w-full bg-black text-white py-4 rounded-2xl font-semibold text-lg hover:bg-gray-800 transition-colors"
+  if (!venue || !timeSlots) {
+    return (
+      <div className="h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Greška</h2>
+          <p className="text-gray-600 mb-4">Podaci o rezervaciji nisu pronađeni.</p>
+          <button 
+            onClick={() => navigate("/court-booking")}
+            className="bg-emerald-500 text-white px-6 py-2 rounded-lg"
           >
-            Napravite rezervaciju
+            Nazad na rezervaciju
           </button>
         </div>
       </div>
+    );
+  }
 
-      {/* Bottom Navigation Spacing */}
-      <div className="h-24"></div>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-0 bg-white shadow-sm z-10">
+        <div className="flex items-center justify-between px-4 py-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          </button>
+          <h1 className="text-lg font-semibold text-gray-900">Potvrda Rezervacije</h1>
+          <div className="w-10 h-10"></div>
+        </div>
+      </div>
+
+      <div className="pb-24">
+        <div className="bg-white m-4 rounded-xl shadow-sm overflow-hidden">
+          <div 
+            className="h-32 bg-gradient-to-r from-emerald-500 to-emerald-600 relative"
+            style={{
+              backgroundImage: `url('/images/tennis-bg.png')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="absolute inset-0 bg-black/40"></div>
+            <div className="absolute bottom-4 left-4">
+              <h2 className="text-white text-xl font-bold">{venue.name}</h2>
+              <div className="flex items-center text-white/90 text-sm">
+                <MapPin className="w-4 h-4 mr-1" />
+                <span>Beograd, Srbija</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white m-4 rounded-xl shadow-sm p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Clock className="w-5 h-5 mr-2 text-emerald-500" />
+            Detalji Rezervacije
+          </h3>
+          
+          <div className="space-y-3">
+            <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-gray-600">Datum:</span>
+              <span className="font-medium text-gray-900">{getDateDisplay(date)}</span>
+            </div>
+            
+            <div className="border-b border-gray-100 pb-3">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-600">Termini:</span>
+                <span className="font-medium text-gray-900">{timeSlots?.length || 0} termin(a)</span>
+              </div>
+              {timeSlots?.map((slot: any, index: number) => (
+                <div key={index} className="flex justify-between items-center text-sm py-1">
+                  <span className="text-gray-500">{slot.start} - {slot.end}</span>
+                  <span className="text-emerald-600 font-medium">
+                    {slot.availableCourts ? `${slot.availableCourts} terena dostupno` : ''} • {slot.price} RSD
+                  </span>
+                </div>
+              ))}
+            </div>
+            
+            <div className="flex justify-between items-center py-2">
+              <span className="text-lg font-semibold text-gray-900">Ukupno:</span>
+              <span className="text-xl font-bold text-emerald-600">{totalPrice} RSD</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white m-4 rounded-xl shadow-sm p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Izbor Terena</h3>
+          
+          <div className="flex bg-gray-100 rounded-lg p-1 mb-4">
+            <button
+              onClick={() => setCourtType("indoor")}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                courtType === "indoor"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              🏠 Zatvoreni Tereni
+            </button>
+            <button
+              onClick={() => setCourtType("outdoor")}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                courtType === "outdoor"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              🌅 Otvoreni Tereni
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            {filteredCourts.map((court) => (
+              <button
+                key={court.id}
+                onClick={() => setSelectedCourt(court.id)}
+                className={`w-full p-3 rounded-lg border-2 text-left transition-all ${
+                  selectedCourt === court.id
+                    ? "border-emerald-500 bg-emerald-50"
+                    : "border-gray-200 bg-gray-50 hover:border-emerald-300"
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="font-medium text-gray-900 flex items-center">
+                      {court.name}
+                      {court.featured && (
+                        <Star className="w-4 h-4 ml-1 text-yellow-500 fill-current" />
+                      )}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {court.type === "indoor" ? "Zatvoreni teren" : "Otvoreni teren"}
+                    </div>
+                  </div>
+                  {selectedCourt === court.id && (
+                    <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white m-4 rounded-xl shadow-sm p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Users className="w-5 h-5 mr-2 text-emerald-500" />
+            Podaci o Igraču
+          </h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Ime i prezime
+              </label>
+              <input
+                type="text"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                placeholder="Unesite ime i prezime"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Broj telefona
+              </label>
+              <input
+                type="tel"
+                value={playerPhone}
+                onChange={(e) => setPlayerPhone(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                placeholder="Unesite broj telefona"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white m-4 rounded-xl shadow-sm p-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <CreditCard className="w-5 h-5 mr-2 text-emerald-500" />
+            Način Plaćanja
+          </h3>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="text-blue-800 text-sm">
+              💳 Plaćanje na licu mesta
+            </div>
+            <div className="text-blue-600 text-xs mt-1">
+              Rezervacija će biti potvrđena. Platićete kada dođete na teren.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-lg font-semibold text-gray-900">Ukupno:</span>
+          <span className="text-xl font-bold text-emerald-600">{totalPrice} RSD</span>
+        </div>
+        <button
+          onClick={handleMakeReservation}
+          disabled={!playerName || !selectedCourt}
+          className="w-full bg-emerald-500 text-white py-3 rounded-xl font-semibold hover:bg-emerald-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          Potvrdi Rezervaciju
+        </button>
+      </div>
     </div>
   );
 }
