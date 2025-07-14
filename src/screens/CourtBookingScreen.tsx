@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, Minus, Calendar, Clock, Loader2 } from "lucide-react";
+import { tennisAPI, useRealtimeUpdates } from "../services/api";
 
 interface TimeSlot {
   id: string;
@@ -30,8 +31,11 @@ export default function CourtBookingScreen() {
   const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Real-time updates (NEW - API only)
+  const realtimeUpdates = useRealtimeUpdates();
+
   const venues: Venue[] = [
-    { id: "baseline", name: "Baseline" },
+    { id: "baseline-tennis", name: "Baseline" },
     { id: "privilege", name: "Privilege" },
     { id: "trim", name: "Trim" },
     { id: "tipsarevic", name: "Tipsarevic" },
@@ -72,35 +76,81 @@ export default function CourtBookingScreen() {
 
   const dates = generateDates();
 
-  // Mock API call to fetch available time slots
+  // Helper function for API calls
+  const getActualDate = (dateId: string) => {
+    if (dateId === "today") return new Date().toISOString().split('T')[0];
+    
+    const today = new Date();
+    const dayMatch = dateId.match(/day-(\d+)/);
+    if (dayMatch) {
+      const dayOffset = parseInt(dayMatch[1]);
+      const date = new Date(today);
+      date.setDate(today.getDate() + dayOffset);
+      return date.toISOString().split('T')[0];
+    }
+    return dateId;
+  };
+
+  // REAL API call to fetch available time slots (UPDATED)
   const fetchAvailableSlots = async (venueId: string, dateId: string) => {
     setLoading(true);
     setSelectedTimeSlots([]); // Clear selections when changing date/venue
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Mock data based on venue and date
-    const mockSlots: TimeSlot[] = [
-      { id: "1", start: "08:00", end: "09:00", price: 2500, available: venueId !== "privilege" },
-      { id: "2", start: "09:00", end: "10:00", price: 3000, available: true },
-      { id: "3", start: "10:00", end: "11:00", price: 3000, available: dateId !== "today" },
-      { id: "4", start: "11:00", end: "12:00", price: 3250, available: false },
-      { id: "5", start: "12:00", end: "13:00", price: 3550, available: true },
-      { id: "6", start: "13:00", end: "14:00", price: 3550, available: dateId === "today" },
-      { id: "7", start: "14:00", end: "15:00", price: 4000, available: false },
-      { id: "8", start: "15:00", end: "16:00", price: 4000, available: true },
-      { id: "9", start: "16:00", end: "17:00", price: 4250, available: venueId === "baseline" },
-      { id: "10", start: "17:00", end: "18:00", price: 4500, available: false },
-      { id: "11", start: "18:00", end: "19:00", price: 4750, available: true },
-      { id: "12", start: "19:00", end: "20:00", price: 5000, available: dateId !== "today" },
-      { id: "13", start: "20:00", end: "21:00", price: 4500, available: false },
-      { id: "14", start: "21:00", end: "22:00", price: 4000, available: venueId === "baseline" },
-    ];
-    
-    setAvailableSlots(mockSlots);
-    setLoading(false);
+    try {
+      const actualDate = getActualDate(dateId);
+      const apiSlots = await tennisAPI.getAvailability(venueId, actualDate);
+      
+      // Convert API format to your original format
+      const formattedSlots: TimeSlot[] = apiSlots.map(slot => ({
+        id: slot.id,
+        start: slot.startTime,
+        end: slot.endTime,
+        price: slot.price,
+        available: slot.available
+      }));
+      
+      setAvailableSlots(formattedSlots);
+    } catch (error) {
+      console.error('Error fetching time slots:', error);
+      setAvailableSlots([]);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Real-time updates (NEW)
+  useEffect(() => {
+    const handleSlotUpdate = (data: { slot: any; courtId: string; date: string }) => {
+      const actualDate = getActualDate(selectedDate);
+      if (data.date === actualDate) {
+        setAvailableSlots(prevSlots => 
+          prevSlots.map(slot => 
+            slot.id === data.slot.id ? {
+              ...slot,
+              available: data.slot.available,
+              price: data.slot.price
+            } : slot
+          )
+        );
+      }
+    };
+
+    const handleBookingCreated = (data: { booking: any; slot: any }) => {
+      const actualDate = getActualDate(selectedDate);
+      if (data.slot.date === actualDate) {
+        setAvailableSlots(prevSlots => 
+          prevSlots.map(slot => 
+            slot.id === data.slot.id ? { ...slot, available: false } : slot
+          )
+        );
+      }
+    };
+
+    realtimeUpdates.onSlotUpdated(handleSlotUpdate);
+    realtimeUpdates.onBookingCreated(handleBookingCreated);
+
+    return () => {};
+  }, [selectedDate, realtimeUpdates]);
 
   // Fetch slots when venue or date changes
   useEffect(() => {
@@ -271,30 +321,34 @@ export default function CourtBookingScreen() {
                     </div>
                   ) : availableSlotsCount === 0 ? (
                     <div className="text-center py-8">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span className="text-lg">😔</span>
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span className="text-2xl">😞</span>
                       </div>
                       <p className="text-gray-500 text-sm">Nema dostupnih termina</p>
-                      <p className="text-gray-400 text-xs">Pokušajte drugi dan</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-2">
                       {availableSlots
-                        .filter(slot => slot.available)
+                        .filter((slot) => slot.available)
+                        .slice(0, 8)
                         .map((slot) => {
                           const isSelected = selectedTimeSlots.some(s => s.id === slot.id);
                           return (
                             <button
                               key={slot.id}
                               onClick={() => toggleTimeSlot(slot)}
-                              className={`p-2 rounded-lg border transition-all text-xs ${
+                              className={`p-3 rounded-xl text-center transition-all ${
                                 isSelected
-                                  ? "bg-emerald-500 text-white border-emerald-500"
-                                  : "bg-gray-50 text-gray-700 border-gray-200 hover:border-emerald-300"
+                                  ? "bg-emerald-500 text-white"
+                                  : "bg-gray-50 hover:bg-gray-100 text-gray-700"
                               }`}
                             >
-                              <div className="font-medium">{slot.start} - {slot.end}</div>
-                              <div className="text-xs opacity-75">{slot.price} RSD</div>
+                              <div className="font-semibold text-sm">
+                                {slot.start} - {slot.end}
+                              </div>
+                              <div className="text-xs font-medium">
+                                {slot.price} RSD
+                              </div>
                             </button>
                           );
                         })}
@@ -302,24 +356,20 @@ export default function CourtBookingScreen() {
                   )}
                 </div>
 
-                {/* Price and Book Button */}
-                <div className="flex items-end justify-between">
-                  <div className="text-left">
-                    <div className="text-gray-500 text-xs mb-1">
+                {/* Summary and Book Button */}
+                <div className="flex items-center justify-between pt-2">
+                  <div>
+                    <p className="text-gray-500 text-xs">
                       Ukupno ({selectedTimeSlots.length} termina):
-                    </div>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {totalPrice.toFixed(0)} RSD
-                    </div>
+                    </p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {totalPrice.toLocaleString()} RSD
+                    </p>
                   </div>
                   <button
                     onClick={handleBookNow}
                     disabled={selectedTimeSlots.length === 0}
-                    className={`py-2.5 px-5 rounded-xl font-semibold text-sm transition-colors ${
-                      selectedTimeSlots.length === 0
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-black text-white hover:bg-gray-800"
-                    }`}
+                    className="bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 text-gray-700 disabled:text-gray-400 px-6 py-2 rounded-xl font-medium transition-colors text-sm disabled:cursor-not-allowed"
                   >
                     Rezerviši
                   </button>
