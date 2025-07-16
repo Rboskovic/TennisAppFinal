@@ -1,4 +1,4 @@
-import { Star, Menu, MapPin, Zap, TrendingUp } from "lucide-react";
+import { Menu, MapPin, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BookingCard from "../components/BookingCard";
 import { currentUser, userBookings } from "../data/mockData";
@@ -6,29 +6,17 @@ import { currentUser, userBookings } from "../data/mockData";
 export default function HomeScreen() {
   const navigate = useNavigate();
 
-  const handleTerenClick = () => {
-    navigate("/court-booking");
-  };
+  const handleTerenClick = () => navigate("/court-booking");
+  const handleMecClick = () => navigate("/find-match");
 
-  const handleMecClick = () => {
-    navigate("/find-match");
-  };
-
-  const handleRankClick = () => {
-    navigate("/ranking");
-  };
+  const availableMatches = 8;
 
   return (
     <div
-      className="h-screen relative overflow-hidden pb-20"
+      className="h-screen relative overflow-hidden"
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
-      {/* Import Inter Font */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet"
-      />
-
+      {/* Background */}
       <div
         className="absolute inset-0"
         style={{
@@ -38,212 +26,108 @@ export default function HomeScreen() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 via-transparent to-green-600/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 via-transparent to-green-600/10" />
       </div>
 
-      <style jsx>{`
-        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
-
-        @keyframes wave {
-          0%,
-          100% {
-            transform: rotate(0deg);
-          }
-          25% {
-            transform: rotate(20deg);
-          }
-          75% {
-            transform: rotate(-10deg);
-          }
-        }
-
-        .wave-emoji {
-          animation: wave 2s ease-in-out infinite;
-          transform-origin: 70% 70%;
-        }
-      `}</style>
-
-      <div className="relative z-10 h-full flex flex-col text-white p-4">
-        {/* Fixed Header - Reduced spacing */}
-        <div className="flex justify-between items-start mb-2">
-          <div className="flex flex-col">
-            {/* Profile Photo - Smaller */}
-            <div className="relative mb-3">
+      {/* Content */}
+      <div className="relative z-10 flex flex-col h-full px-4 pt-8 text-white">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <div className="flex items-center mb-2">
               <img
                 src="https://randomuser.me/api/portraits/women/24.jpg"
                 alt="Profile"
-                className="w-10 h-10 rounded-full shadow-lg object-cover"
-                style={{
-                  boxShadow:
-                    "0 0 0 2px rgba(59, 130, 246, 0.4), 0 8px 25px -5px rgba(0, 0, 0, 0.3)",
-                }}
+                className="w-11 h-11 rounded-full object-cover mr-3"
               />
-            </div>
-
-            <div>
-              {/* Greeting - Smaller text */}
-              <div className="flex items-center space-x-2">
+              <h1 className="text-2xl font-bold">
+                Zdravo, Katarina!{" "}
                 <span
-                  className="text-xl font-medium opacity-90 tracking-wide"
-                  style={{ fontFamily: "Inter, sans-serif", fontWeight: "500" }}
+                  className="inline-block text-xl"
+                  style={{ animation: "wave 2s ease-in-out infinite" }}
                 >
-                  Ćao,
+                  👋
                 </span>
-                <span className="text-3xl wave-emoji">👋</span>
-              </div>
-              {/* Katarina - Smaller */}
-              <div
-                className="text-4xl font-bold leading-tight text-white tracking-tight -mt-1"
-                style={{ fontFamily: "Inter, sans-serif", fontWeight: "800" }}
-              >
-                Katarina
-              </div>
+              </h1>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <MapPin className="w-4 h-4 text-white/70" />
+              <span className="text-white/70">Beograd, Serbia</span>
             </div>
           </div>
-          {/* Hamburger Menu - Smaller */}
-          <div
-            className="bg-white/20 p-2.5 rounded-full backdrop-blur-sm"
-            style={{
-              height: "40px",
-              width: "40px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Menu className="w-5 h-5 text-white" />
-          </div>
+          <button className="w-11 h-11 flex items-center justify-center">
+            <Menu className="w-6 h-6 text-white" />
+          </button>
         </div>
 
-        {/* Rating - Compact */}
-        <button
-          onClick={handleRankClick}
-          className="flex items-center space-x-2 mb-4 hover:bg-white/10 rounded-xl p-2 -ml-2 transition-all self-start"
-        >
-          <Star className="w-4 h-4 fill-white text-white" />
-          <span
-            className="text-sm font-semibold tracking-tight"
-            style={{ fontFamily: "Inter, sans-serif", fontWeight: "600" }}
+        {/* Spacer pushes content downward */}
+        <div className="mt-40" />
+
+        {/* Main content (actions + reservations) */}
+        <div className="flex flex-col space-y-2 pb-8">
+          {/* Pronađi Teren */}
+          <button
+            onClick={handleTerenClick}
+            className="flex items-center justify-between w-full p-4 bg-white rounded-2xl shadow-md hover:shadow-lg active:scale-[0.98] transition-transform"
           >
-            47 rank
-          </span>
-          <TrendingUp className="w-4 h-4 text-green-400" />
-        </button>
-
-        {/* Flexible Middle Section */}
-        <div className="flex-1 flex flex-col justify-center">
-          {/* Main Action Buttons - Reduced padding */}
-          <div className="space-y-2.5 mb-6">
-            <button
-              onClick={handleTerenClick}
-              className="w-full bg-white/85 backdrop-blur-md border border-white/30 rounded-2xl p-3.5 shadow-2xl hover:bg-white/90 hover:shadow-3xl transition-all active:scale-98 group"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <MapPin className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 text-left">
-                  <div
-                    className="text-gray-900 font-bold text-base tracking-tight"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: "700",
-                    }}
-                  >
-                    Pronađi Teren
-                  </div>
-                  <div
-                    className="text-gray-600 font-medium text-sm tracking-wide"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Rezerviši terene u blizini
-                  </div>
-                </div>
-                <div className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
+            <div className="flex items-center flex-1 text-left">
+              <div className="p-3 mr-4 bg-emerald-50 rounded-full">
+                <MapPin className="w-6 h-6 text-emerald-600" />
               </div>
-            </button>
-
-            <button
-              onClick={handleMecClick}
-              className="w-full bg-white/85 backdrop-blur-md border border-white/30 rounded-2xl p-3.5 shadow-2xl hover:bg-white/90 hover:shadow-3xl transition-all active:scale-98 group"
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-11 h-11 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Zap className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1 text-left">
-                  <div
-                    className="text-gray-900 font-bold text-base tracking-tight"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: "700",
-                    }}
-                  >
-                    Pronađi Meč
-                  </div>
-                  <div
-                    className="text-gray-600 font-medium text-sm tracking-wide"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Igraj protiv drugih igrača
-                  </div>
-                </div>
-                <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">
+                  Pronađi Teren
+                </h3>
+                <p className="text-sm text-gray-600">Rezerviši teren</p>
               </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Bottom Bookings Section - Compact */}
-        <div className="mt-auto">
-          <h2
-            className="text-xl tracking-tight drop-shadow-sm mb-2"
-            style={{ fontFamily: "Inter, sans-serif", fontWeight: "700" }}
-          >
-            <span className="font-bold">Vaše</span>{" "}
-            <span className="font-light" style={{ fontWeight: "300" }}>
-              Rezervacije
+            </div>
+            <span className="px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-full min-w-[96px] text-center">
+              Rezerviši
             </span>
-          </h2>
+          </button>
 
-          <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide -mr-4 pr-4">
-            {userBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
-            ))}
+          {/* Pronađi Meč */}
+          <button
+            onClick={handleMecClick}
+            className="flex items-center justify-between w-full p-4 bg-emerald-600 rounded-2xl shadow-md hover:shadow-lg active:scale-[0.98] transition-transform"
+          >
+            <div className="flex items-center flex-1 text-left">
+              <div className="p-3 mr-4 bg-white/20 rounded-full backdrop-blur-sm">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Pronađi Meč</h3>
+                <p className="text-sm text-white/90">
+                  {availableMatches} mečeva dostupno
+                </p>
+              </div>
+            </div>
+            <span className="px-4 py-2 text-sm font-bold text-emerald-700 bg-white rounded-full min-w-[96px] text-center">
+              Igraj
+            </span>
+          </button>
+
+          {/* Moje Rezervacije */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-base font-semibold text-white">
+                Moje Rezervacije
+              </h2>
+              <button
+                onClick={() => navigate("/poruke")}
+                className="text-white/80 text-sm font-medium"
+              >
+                Vidi sve
+              </button>
+            </div>
+
+            <div className="flex gap-11 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2">
+              {userBookings.slice(0, 3).map((booking) => (
+                <div key={booking.id} className="flex-shrink-0 w-64">
+                  <BookingCard booking={booking} className="p-3 space-y-1" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
