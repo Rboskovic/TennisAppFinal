@@ -10,7 +10,9 @@ import { useNavigate } from "react-router-dom";
 
 export default function RankingScreen() {
   const [selectedScope, setSelectedScope] = useState<"svi" | "">("svi");
-  const [selectedGameType, setSelectedGameType] = useState<"singl" | "dubl">("singl");
+  const [selectedGameType, setSelectedGameType] = useState<"singl" | "dubl">(
+    "singl"
+  );
   const [showGameTypeDropdown, setShowGameTypeDropdown] = useState(false);
   const [showClubDropdown, setShowClubDropdown] = useState(false);
   const [selectedClub, setSelectedClub] = useState("");
