@@ -4,25 +4,11 @@ import RankingScreen from "./screens/RankingScreen";
 import IstraziScreen from "./screens/IstraziScreen";
 import CourtBookingScreen from "./screens/CourtBookingScreen";
 import FindMatchScreen from "./screens/FindMatchScreen";
-import VenueDetailsScreen from "./screens/VenueDetailsScreen"; // ADD THIS LINE
+import VenueDetailsScreen from "./screens/VenueDetailsScreen";
+import TurniriScreen from "./screens/TurniriScreen";
+import TournamentDetailsScreen from "./screens/TournamentDetailsScreen";
 import BottomNavigation from "./components/BottomNavigation";
 import PorukeScreen from "./screens/PorukeScreen";
-
-// Placeholder screens
-function TurniriScreen() {
-  return (
-    <div className="h-screen bg-gray-100 flex items-center justify-center pb-20">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          🏆 Turniri & Lige
-        </h1>
-        <p className="text-gray-600">
-          Tournaments & Leagues screen coming soon...
-        </p>
-      </div>
-    </div>
-  );
-}
 
 function App() {
   return (
@@ -32,6 +18,7 @@ function App() {
           <Route path="/" element={<HomeScreen />} />
           <Route path="/istrazi" element={<IstraziScreen />} />
           <Route path="/turniri" element={<TurniriScreen />} />
+          <Route path="/tournament/:id" element={<TournamentDetailsScreen />} />
           <Route path="/ranking" element={<RankingScreen />} />
           <Route path="/poruke" element={<PorukeScreen />} />
           <Route path="/court-booking" element={<CourtBookingScreen />} />
@@ -39,8 +26,7 @@ function App() {
           <Route
             path="/court-details/:venueId"
             element={<VenueDetailsScreen />}
-          />{" "}
-          {/* ADD THIS LINE */}
+          />
         </Routes>
         <BottomNavigation />
       </div>
