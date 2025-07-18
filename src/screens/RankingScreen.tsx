@@ -1,3 +1,5 @@
+// src/screens/RankingScreen.tsx
+
 import {
   ArrowLeft,
   Search,
@@ -9,7 +11,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function RankingScreen() {
-  const [selectedScope, setSelectedScope] = useState<"svi" | "">("svi");
+  const [selectedScope, setSelectedScope] = useState<"svi" | "ja">("svi");
   const [selectedGameType, setSelectedGameType] = useState<"singl" | "dubl">(
     "singl"
   );
@@ -83,7 +85,7 @@ export default function RankingScreen() {
   };
 
   const handleMessagePlayer = (playerName: string) => {
-    console.log(`Message ${playerName}`);
+    navigate(`/poruke?player=${encodeURIComponent(playerName)}`);
   };
 
   const handleChallengePlayer = (playerName: string) => {
@@ -230,7 +232,7 @@ export default function RankingScreen() {
         </div>
       </div>
 
-      {/* Table Headers - Reduced padding */}
+      {/* Table Headers */}
       <div className="px-4 py-2 bg-emerald-50 border-b border-emerald-100">
         <div className="flex items-center">
           <div className="flex-1">
@@ -298,7 +300,7 @@ export default function RankingScreen() {
                 </span>
               </div>
 
-              {/* Action Buttons */}
+              {/* Actions */}
               <div className="w-24 flex items-center justify-center space-x-2">
                 {!player.isCurrentUser && (
                   <>
@@ -309,7 +311,6 @@ export default function RankingScreen() {
                     >
                       <MessageCircle className="w-4 h-4" />
                     </button>
-
                     <button
                       onClick={() => handleChallengePlayer(player.name)}
                       className="p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 transition-colors"
@@ -324,7 +325,7 @@ export default function RankingScreen() {
           </div>
         ))}
 
-        {/* Show More Button - Slightly Bigger */}
+        {/* Show More Button */}
         {showCount < filteredPlayers.length && (
           <div className="px-4 py-4 text-center bg-white border-t border-slate-100">
             <button
