@@ -23,6 +23,7 @@ import {
   Search,
   Plus,
   Shield,
+  MessageSquare,
 } from "lucide-react";
 import {
   chatAPI,
@@ -41,7 +42,9 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState<"sve" | "neprocitano" | "igraci" | "grupe">("sve");
+  const [activeFilter, setActiveFilter] = useState<
+    "sve" | "neprocitano" | "igraci" | "grupe"
+  >("sve");
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
@@ -63,8 +66,8 @@ export default function ChatScreen() {
     const clubParam = searchParams.get("club");
 
     if (playerParam) {
-      const directConv = conversations.find((c) => 
-        c.type === "direct" && c.name === playerParam
+      const directConv = conversations.find(
+        (c) => c.type === "direct" && c.name === playerParam
       );
       if (directConv) {
         setSelectedConversation(directConv);
@@ -143,7 +146,6 @@ export default function ChatScreen() {
       setMessages((prev) => [...prev, message]);
       setNewMessage("");
       scrollToBottom();
-      updateConversationWithNewMessage(message);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -151,59 +153,46 @@ export default function ChatScreen() {
 
   const updateConversationWithNewMessage = (message: Message) => {
     setConversations((prev) =>
-      prev.map((conv) => {
-        if (conv.id === message.conversationId) {
-          return {
-            ...conv,
-            lastMessage: message.content,
-            lastMessageTime: message.createdAt,
-            unreadCount:
-              conv.id === selectedConversation?.id ? 0 : conv.unreadCount + 1,
-          };
-        }
-        return conv;
-      })
+      prev.map((conv) =>
+        conv.id === message.conversationId
+          ? {
+              ...conv,
+              lastMessage: message.content,
+              lastMessageTime: message.createdAt,
+              unreadCount: conv.unreadCount + 1,
+            }
+          : conv
+      )
     );
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return "Sada";
-    if (diffMins < 60) return `pre ${diffMins} min`;
-    if (diffHours < 24) return `pre ${diffHours}h`;
-    if (diffDays < 7) return `pre ${diffDays}d`;
-
-    return date.toLocaleDateString("sr-RS", {
-      day: "2-digit",
-      month: "2-digit",
+    return date.toLocaleTimeString("sr-RS", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getConversationName = (conversation: Conversation) => {
-    if (conversation.name) {
-      return conversation.name
-        .replace(/\s*-\s*Grupni chat$/i, "")
-        .replace(/\s*Tennis$/i, "")
-        .replace(/Baseline/i, "Baseline")
-        .replace(/Privilege/i, "Privilege")
-        .replace(/Trim/i, "Trim")
-        .replace(/Tipsarevic/i, "Tipsarevic");
+    if (conversation.type === "system") {
+      return "Zvanična obaveštenja";
     }
-    if (conversation.type === "direct" && conversation.participantNames) {
-      const otherUserId = conversation.participants.find(
-        (p) => p !== currentUser.id
+    if (conversation.type === "group") {
+      return conversation.name || "Grupni chat";
+    }
+    if (conversation.type === "direct") {
+      return (
+        conversation.participantNames?.[
+          conversation.participants.find((p) => p !== currentUser.id) || ""
+        ] || "Nepoznat igrač"
       );
-      return conversation.participantNames[otherUserId!] || "Nepoznat igrač";
     }
     return "Nepoznat chat";
   };
@@ -228,37 +217,64 @@ export default function ChatScreen() {
 
   const getTotalUnreadCount = (type: "direct" | "group") => {
     return conversations
-      .filter((conv) => conv.type === type || (type === "direct" && conv.type === "system"))
+      .filter(
+        (conv) =>
+          conv.type === type || (type === "direct" && conv.type === "system")
+      )
       .reduce((total, conv) => total + conv.unreadCount, 0);
   };
 
   const getMessageSenderName = (message: Message) => {
-    if (message.content.startsWith("[ADMIN]") || message.content.startsWith("[URGENT]")) {
+    // Check if message starts with admin prefixes
+    if (
+      message.content.startsWith("[ADMIN]") ||
+      message.content.startsWith("[URGENT]")
+    ) {
       return "Baseline Tennis";
     }
-    if (message.content.startsWith("[REZERVACIJE:")) {
+    if (
+      message.content.startsWith("[REZERVACIJE:") ||
+      message.content.includes("[REZERVACIJE:")
+    ) {
       return "Baseline Tennis";
     }
-    if (message.content.startsWith("[MODERATOR]") || message.content.startsWith("[BASELINE]")) {
+    if (
+      message.content.startsWith("[MODERATOR]") ||
+      message.content.startsWith("[BASELINE]")
+    ) {
+      return "Baseline Tennis";
+    }
+    // Check sender name for admin users
+    if (
+      message.senderName.includes("TENNIS") ||
+      message.senderName.includes("BASELINE")
+    ) {
       return "Baseline Tennis";
     }
     return message.senderName;
   };
 
   const formatMessageContent = (content: string) => {
-    // Handle @rezervacije mentions with better formatting
+    // Handle @rezervacije mentions with enhanced power feature styling
     const rezervacijeRegex = /@rezervacije\s+(\d{4}-\d{2}-\d{2})/g;
     const parts = content.split(rezervacijeRegex);
-    
+
     if (parts.length > 1) {
       return (
         <span>
           {parts.map((part, index) => {
             if (index % 2 === 1) {
-              // This is a date part - make it more visible
+              // This is a date part - style as premium power feature
               return (
-                <span key={index} className="inline-flex items-center bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold mx-1 shadow-md">
-                  @rezervacije <span className="ml-1 font-black">{part}</span>
+                <span
+                  key={index}
+                  className="inline-flex items-center bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 py-1.5 rounded-full text-sm font-bold mx-1 shadow-lg border-2 border-blue-300"
+                >
+                  <Calendar className="w-3 h-3 mr-1" />
+                  rezervacije
+                  <span className="ml-1 font-black bg-white/20 px-2 py-0.5 rounded-full text-xs">
+                    {part}
+                  </span>
                 </span>
               );
             }
@@ -267,17 +283,17 @@ export default function ChatScreen() {
         </span>
       );
     }
-    
+
     return content;
   };
 
   // Check if we should show timestamp (last message in a group from same sender)
   const shouldShowTimestamp = (message: Message, index: number) => {
     if (index === messages.length - 1) return true; // Always show for last message
-    
+
     const nextMessage = messages[index + 1];
     if (!nextMessage) return true;
-    
+
     // Show timestamp if next message is from different sender
     return message.senderId !== nextMessage.senderId;
   };
@@ -292,10 +308,10 @@ export default function ChatScreen() {
 
   const getFilteredConversations = () => {
     let convs = conversations;
-    
+
     switch (activeFilter) {
       case "neprocitano":
-        convs = conversations.filter(conv => conv.unreadCount > 0);
+        convs = conversations.filter((conv) => conv.unreadCount > 0);
         break;
       case "igraci":
         convs = directConversations;
@@ -306,7 +322,7 @@ export default function ChatScreen() {
       default:
         convs = conversations;
     }
-    
+
     return convs.sort((a, b) => {
       if (a.type === "group" && b.type !== "group") return -1;
       if (a.type !== "group" && b.type === "group") return 1;
@@ -329,7 +345,7 @@ export default function ChatScreen() {
       {!selectedConversation ? (
         <div className="flex-1 flex flex-col">
           {/* Header with Tennis Background */}
-          <div 
+          <div
             className="relative text-white"
             style={{
               backgroundImage: `url('/images/tennis-bg.png')`,
@@ -339,7 +355,7 @@ export default function ChatScreen() {
             }}
           >
             <div className="absolute inset-0 bg-emerald-600/80"></div>
-            
+
             <div className="relative z-10">
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center">
@@ -349,28 +365,29 @@ export default function ChatScreen() {
                   <div>
                     <h1 className="text-lg font-semibold">Poruke</h1>
                     {chatRealtimeUpdates.isConnected ? (
-                      <div className="flex items-center text-emerald-100 text-xs">
-                        <Wifi className="w-3 h-3 mr-1" />
-                        <span>Uživo</span>
+                      <div className="flex items-center space-x-1 text-xs text-emerald-100">
+                        <Wifi className="w-3 h-3" />
+                        <span>Online</span>
                       </div>
                     ) : (
-                      <div className="flex items-center text-emerald-200 text-xs">
-                        <WifiOff className="w-3 h-3 mr-1" />
+                      <div className="flex items-center space-x-1 text-xs text-red-200">
+                        <WifiOff className="w-3 h-3" />
                         <span>Offline</span>
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center">
-                  <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                    <Search className="w-6 h-6" />
-                  </button>
-                </div>
+                <button
+                  onClick={() => navigate("/ranking")}
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
               </div>
 
-              {/* Filter Navigation - Better contrast */}
+              {/* Filter tabs with improved badges */}
               <div className="px-4 pb-4">
-                <div className="flex gap-2 overflow-x-auto">
+                <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
                   <button
                     onClick={() => setActiveFilter("sve")}
                     className={`px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap border-2 ${
@@ -379,17 +396,26 @@ export default function ChatScreen() {
                         : "bg-emerald-500/30 text-white border-white/30 hover:bg-emerald-500/50"
                     }`}
                   >
-                    Sve poruke
+                    Sve
                   </button>
                   <button
                     onClick={() => setActiveFilter("neprocitano")}
-                    className={`px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap border-2 ${
+                    className={`px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap border-2 relative ${
                       activeFilter === "neprocitano"
                         ? "bg-white text-emerald-700 shadow-lg border-white"
                         : "bg-emerald-500/30 text-white border-white/30 hover:bg-emerald-500/50"
                     }`}
                   >
                     Nepročitano
+                    {conversations.filter((conv) => conv.unreadCount > 0)
+                      .length > 0 && (
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                        {
+                          conversations.filter((conv) => conv.unreadCount > 0)
+                            .length
+                        }
+                      </span>
+                    )}
                   </button>
                   <button
                     onClick={() => setActiveFilter("igraci")}
@@ -425,7 +451,9 @@ export default function ChatScreen() {
                   Nema poruka
                 </h3>
                 <p className="text-gray-500 text-sm mb-4">
-                  {activeFilter === "neprocitano" ? "Nema nepročitanih poruka" : "Počnite razgovor sa drugim teniserima"}
+                  {activeFilter === "neprocitano"
+                    ? "Nema nepročitanih poruka"
+                    : "Počnite razgovor sa drugim teniserima"}
                 </p>
               </div>
             ) : (
@@ -448,69 +476,36 @@ export default function ChatScreen() {
                               ? "bg-blue-100 text-blue-600"
                               : conversation.type === "group"
                               ? "bg-emerald-100 text-emerald-600"
-                              : "bg-emerald-100 text-emerald-600"
+                              : "bg-purple-100 text-purple-600"
                           }`}
                         >
                           {getConversationAvatar(conversation)}
                         </div>
-                        {conversation.type === "direct" && onlineUsers.includes(conversation.id) && (
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
-                        )}
                         {conversation.unreadCount > 0 && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 border-2 border-white rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-white">
-                              {conversation.unreadCount > 9 ? "9+" : conversation.unreadCount}
-                            </span>
+                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                            {conversation.unreadCount > 9
+                              ? "9+"
+                              : conversation.unreadCount}
                           </div>
                         )}
                       </div>
 
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between">
-                          {/* Left side - Name and rating */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="text-sm font-semibold text-gray-900 truncate">
-                                {getConversationName(conversation)}
-                              </h3>
-                              {conversation.type === "direct" && (
-                                <span className="text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full font-medium flex-shrink-0">
-                                  {getPlayerRating(conversation)}
-                                </span>
-                              )}
-                            </div>
-                            
-                            {/* Last message - 2 rows */}
-                            <div className="text-left">
-                              {conversation.lastMessage ? (
-                                <div className="space-y-0.5">
-                                  <div className="flex items-center space-x-1 text-xs text-gray-600">
-                                    <span className="font-medium">
-                                      {getMessageSenderName({
-                                        content: conversation.lastMessage,
-                                        senderName: "Korisnik"
-                                      } as Message)}:
-                                    </span>
-                                  </div>
-                                  <p className="text-xs text-gray-600 truncate">
-                                    {conversation.lastMessage.replace(/^\[.*?\]\s*/, "")}
-                                  </p>
-                                </div>
-                              ) : (
-                                <p className="text-xs text-gray-400 italic">
-                                  {conversation.type === "direct" ? "Počnite razgovor" : "Nema poruka"}
-                                </p>
-                              )}
-                            </div>
-                          </div>
+                      {/* Conversation Info */}
+                      <div className="flex-1 text-left">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="font-semibold text-gray-900 text-sm">
+                            {getConversationName(conversation)}
+                          </h3>
 
-                          {/* Right side - Members and time */}
-                          <div className="flex flex-col items-end space-y-1 ml-3 flex-shrink-0">
+                          {/* Improved Member Count Display with Icon */}
+                          <div className="flex items-center space-x-2">
                             {conversation.type === "group" && (
-                              <span className="text-xs text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">
-                                {conversation.participants.length} članova
-                              </span>
+                              <div className="flex items-center space-x-1 bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
+                                <Users className="w-3 h-3" />
+                                <span className="text-xs font-medium">
+                                  {conversation.participants.length}
+                                </span>
+                              </div>
                             )}
                             {conversation.lastMessageTime && (
                               <span className="text-xs text-gray-500">
@@ -520,17 +515,56 @@ export default function ChatScreen() {
                           </div>
                         </div>
 
-                        {/* Typing indicator */}
-                        {typingUsers.length > 0 && conversation.id === selectedConversation?.id && (
-                          <div className="flex items-center space-x-1 mt-1">
-                            <div className="flex space-x-1">
-                              <div className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce"></div>
-                              <div className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-                              <div className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                            </div>
-                            <span className="text-xs text-emerald-600">kuca...</span>
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 mr-2">
+                            {conversation.lastMessage ? (
+                              <div className="space-y-0.5">
+                                <div className="flex items-center space-x-1 text-xs text-gray-600">
+                                  <span className="font-medium">
+                                    {getMessageSenderName({
+                                      content: conversation.lastMessage,
+                                      senderName: "Korisnik",
+                                    } as Message)}
+                                    :
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-600 truncate">
+                                  {conversation.lastMessage.replace(
+                                    /^\[.*?\]\s*/,
+                                    ""
+                                  )}
+                                </p>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-gray-400 italic">
+                                {conversation.type === "direct"
+                                  ? "Počnite razgovor"
+                                  : "Nema poruka"}
+                              </p>
+                            )}
                           </div>
-                        )}
+                        </div>
+
+                        {/* Typing indicator */}
+                        {typingUsers.length > 0 &&
+                          conversation.id === selectedConversation?.id && (
+                            <div className="flex items-center space-x-1 mt-1">
+                              <div className="flex space-x-1">
+                                <div className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce"></div>
+                                <div
+                                  className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce"
+                                  style={{ animationDelay: "0.1s" }}
+                                ></div>
+                                <div
+                                  className="w-1 h-1 bg-emerald-400 rounded-full animate-bounce"
+                                  style={{ animationDelay: "0.2s" }}
+                                ></div>
+                              </div>
+                              <span className="text-xs text-emerald-600">
+                                kuca...
+                              </span>
+                            </div>
+                          )}
                       </div>
                     </div>
                   </button>
@@ -544,17 +578,17 @@ export default function ChatScreen() {
             <button
               onClick={() => navigate("/ranking")}
               className="w-12 h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110"
-              style={{ marginBottom: '0px' }}
+              style={{ marginBottom: "0px" }}
             >
               <Plus className="w-5 h-5" />
             </button>
           </div>
         </div>
       ) : (
-        // Conversation View
-        <div className="flex-1 flex flex-col">
-          {/* Chat Header */}
-          <div className="bg-emerald-600 text-white px-4 py-3 flex items-center justify-between shadow-lg">
+        // Conversation View - FIXED LAYOUT FOR PROPER SCROLLING
+        <div className="h-full flex flex-col">
+          {/* Chat Header - Fixed at top */}
+          <div className="bg-emerald-600 text-white px-4 py-3 flex items-center justify-between shadow-lg flex-shrink-0">
             <div className="flex items-center">
               <button
                 onClick={() => {
@@ -574,13 +608,22 @@ export default function ChatScreen() {
                     {getConversationName(selectedConversation)}
                   </h2>
                   {selectedConversation.type === "group" && (
-                    <p className="text-xs text-white/80">
-                      {selectedConversation.participants.length} članova • {selectedConversation.clubId}
-                    </p>
+                    <div className="flex items-center space-x-2 text-xs text-white/80">
+                      <div className="flex items-center space-x-1">
+                        <Users className="w-3 h-3" />
+                        <span>
+                          {selectedConversation.participants.length} članova
+                        </span>
+                      </div>
+                      <span>•</span>
+                      <span>{selectedConversation.clubId}</span>
+                    </div>
                   )}
                   {selectedConversation.type === "direct" && (
                     <div className="flex items-center space-x-2 text-xs text-white/80">
-                      <span>Rating: {getPlayerRating(selectedConversation)}</span>
+                      <span>
+                        Rating: {getPlayerRating(selectedConversation)}
+                      </span>
                       <span>•</span>
                       <span>Aktivan sada</span>
                     </div>
@@ -588,7 +631,7 @@ export default function ChatScreen() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               {selectedConversation.type === "direct" && (
                 <>
@@ -598,9 +641,6 @@ export default function ChatScreen() {
                   <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
                     <Video className="w-5 h-5" />
                   </button>
-                  <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                    <Calendar className="w-5 h-5" />
-                  </button>
                 </>
               )}
               <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
@@ -609,25 +649,27 @@ export default function ChatScreen() {
             </div>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto bg-gray-50 px-4 py-4 space-y-1">
+          {/* Messages Container - Scrollable area with proper height */}
+          <div className="flex-1 overflow-y-auto bg-gray-50 px-4 py-4 scrollbar-thin">
             {messages.map((message, index) => {
               const isOwnMessage = message.senderId === currentUser.id;
-              const isSystem = message.type === "system";
-              const isUrgentMessage = message.content.startsWith("[URGENT]");
-              const isAdminMessage = message.content.startsWith("[ADMIN]") || message.content.startsWith("[URGENT]") || message.content.startsWith("[BASELINE]") || message.content.startsWith("[MODERATOR]");
-              const isReservationMessage = message.content.includes("[REZERVACIJE:");
-              const isPinnedMessage = message.content.includes("[PINNED]");
-              const showAvatar = !isOwnMessage && (index === 0 || messages[index - 1].senderId !== message.senderId);
               const showTimestamp = shouldShowTimestamp(message, index);
+              const isSystem = message.type === "system";
+
+              // Admin message detection
+              const isUrgentMessage = message.content.startsWith("[URGENT]");
+              const isAdminMessage =
+                message.content.startsWith("[ADMIN]") ||
+                message.content.startsWith("[URGENT]") ||
+                message.content.startsWith("[BASELINE]") ||
+                message.content.startsWith("[MODERATOR]");
+              const isReservationMessage =
+                message.content.includes("[REZERVACIJE:") ||
+                message.content.includes("@rezervacije");
+              const isPinnedMessage = message.content.includes("[PINNED]");
 
               return (
-                <div
-                  key={message.id}
-                  className={`flex ${
-                    isOwnMessage ? "justify-end" : "justify-start"
-                  } ${index > 0 && messages[index - 1].senderId === message.senderId ? "mt-1" : "mt-4"}`}
-                >
+                <div key={message.id} className="mb-4">
                   {isSystem ? (
                     <div className="max-w-xs mx-auto">
                       <div className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg text-center">
@@ -638,79 +680,115 @@ export default function ChatScreen() {
                         {formatTime(message.createdAt)}
                       </p>
                     </div>
-                  ) : (
-                    <div
-                      className={`flex max-w-xs ${
-                        isOwnMessage ? "flex-row-reverse" : "flex-row"
-                      }`}
-                    >
-                      {/* Avatar */}
-                      {!isOwnMessage && (
-                        <div className={`flex-shrink-0 ${isOwnMessage ? "ml-2" : "mr-2"}`}>
-                          {showAvatar ? (
-                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-sm">
-                              🎾
-                            </div>
-                          ) : (
-                            <div className="w-8"></div>
-                          )}
-                        </div>
-                      )}
+                  ) : !isOwnMessage ? (
+                    <div className="flex items-start space-x-2">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                          isAdminMessage
+                            ? isUrgentMessage
+                              ? "bg-red-600 text-white"
+                              : "bg-emerald-600 text-white"
+                            : "bg-purple-100 text-purple-600"
+                        }`}
+                      >
+                        {isAdminMessage ? "🎾" : message.senderName.charAt(0)}
+                      </div>
+                      <div className="flex-1 max-w-[75%]">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="text-xs font-medium text-gray-700">
+                            {isAdminMessage
+                              ? getMessageSenderName(message)
+                              : message.senderName}
+                          </span>
 
-                      <div className={`flex flex-col ${isOwnMessage ? "items-end" : "items-start"}`}>
-                        {!isOwnMessage && showAvatar && (
-                          <div className="flex items-center space-x-2 mb-1 px-2">
-                            <p className="text-xs text-gray-600">
-                              {getMessageSenderName(message)}
-                            </p>
-                            {isAdminMessage && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                <Shield className="w-3 h-3 mr-1" />
-                                ADMIN
+                          {/* Admin Badge */}
+                          {isAdminMessage && (
+                            <div className="flex items-center space-x-1">
+                              <Shield
+                                className={`w-3 h-3 ${
+                                  isUrgentMessage
+                                    ? "text-red-600"
+                                    : "text-emerald-600"
+                                }`}
+                              />
+                              <span
+                                className={`text-xs font-bold px-1.5 py-0.5 rounded ${
+                                  isUrgentMessage
+                                    ? "bg-red-100 text-red-700"
+                                    : "bg-emerald-100 text-emerald-700"
+                                }`}
+                              >
+                                {isUrgentMessage ? "URGENT" : "ADMIN"}
                               </span>
-                            )}
-                            {isReservationMessage && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                <Calendar className="w-3 h-3 mr-1" />
+                            </div>
+                          )}
+
+                          {/* Reservation Badge */}
+                          {isReservationMessage && (
+                            <div className="flex items-center space-x-1">
+                              <Calendar className="w-3 h-3 text-blue-600" />
+                              <span className="text-xs font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
                                 REZERVACIJE
                               </span>
-                            )}
-                          </div>
-                        )}
-                        
+                            </div>
+                          )}
+
+                          <span className="text-xs text-gray-500">
+                            {formatTime(message.createdAt)}
+                          </span>
+                        </div>
+
                         <div
-                          className={`px-4 py-2 rounded-2xl max-w-full break-words ${
-                            isUrgentMessage
-                              ? "bg-red-600 text-white rounded-bl-sm shadow-lg border-2 border-red-700"
-                              : isOwnMessage
-                              ? "bg-emerald-600 text-white rounded-br-sm"
-                              : "bg-white text-gray-800 rounded-bl-sm shadow-sm border"
+                          className={`px-4 py-3 rounded-lg shadow-sm ${
+                            isAdminMessage
+                              ? isUrgentMessage
+                                ? "bg-red-600 text-white border-2 border-red-700 shadow-lg animate-pulse"
+                                : "bg-emerald-600 text-white border-2 border-emerald-700"
+                              : isReservationMessage
+                              ? "bg-blue-600 text-white border-2 border-blue-700"
+                              : "bg-white border border-gray-200 text-gray-800"
                           }`}
                         >
-                          <div className="text-sm">
-                            {formatMessageContent(message.content.replace(/^\[.*?\]\s*/, ""))}
-                          </div>
-                        </div>
-                        
-                        {/* Only show timestamp for last message in group */}
-                        {showTimestamp && (
                           <div
-                            className={`flex items-center mt-1 px-2 ${
-                              isOwnMessage ? "flex-row-reverse space-x-reverse space-x-1" : "space-x-1"
+                            className={`text-sm ${
+                              isAdminMessage || isReservationMessage
+                                ? "font-medium"
+                                : ""
                             }`}
                           >
+                            {formatMessageContent(
+                              isAdminMessage ||
+                                isReservationMessage ||
+                                isPinnedMessage
+                                ? message.content.replace(/^\[.*?\]\s*/, "")
+                                : message.content
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex justify-end">
+                      <div className="max-w-[75%]">
+                        <div className="bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-sm">
+                          <div className="text-sm">
+                            {formatMessageContent(message.content)}
+                          </div>
+                        </div>
+
+                        {/* Only show timestamp for last message in group */}
+                        {showTimestamp && (
+                          <div className="flex items-center justify-end mt-1 space-x-1">
                             <span className="text-xs text-gray-500">
                               {formatTime(message.createdAt)}
                             </span>
-                            {isOwnMessage && (
-                              <div className="text-emerald-600">
-                                {message.readBy.length > 1 ? (
-                                  <CheckCheck className="w-3 h-3" />
-                                ) : (
-                                  <Check className="w-3 h-3" />
-                                )}
-                              </div>
-                            )}
+                            <div className="text-emerald-600">
+                              {message.readBy.length > 1 ? (
+                                <CheckCheck className="w-3 h-3" />
+                              ) : (
+                                <Check className="w-3 h-3" />
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -722,13 +800,13 @@ export default function ChatScreen() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Message Input */}
-          <div className="bg-white border-t border-gray-200 px-4 py-3">
+          {/* Message Input - Fixed at bottom */}
+          <div className="bg-white border-t border-gray-200 px-4 py-3 flex-shrink-0">
             <div className="flex items-end space-x-3">
               <button className="p-2 text-gray-400 hover:text-emerald-600 transition-colors">
                 <Camera className="w-5 h-5" />
               </button>
-              
+
               <div className="flex-1">
                 <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
                   <input
@@ -750,13 +828,13 @@ export default function ChatScreen() {
                   />
                 </div>
               </div>
-              
+
               <button
                 onClick={sendMessage}
                 disabled={!newMessage.trim()}
                 className={`p-3 rounded-full transition-all ${
                   newMessage.trim()
-                    ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg"
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:scale-105"
                     : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >
