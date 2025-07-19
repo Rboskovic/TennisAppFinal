@@ -6,7 +6,11 @@ interface BookingCardProps {
   compact?: boolean;
 }
 
-export default function BookingCard({ booking, className = "", compact = false }: BookingCardProps) {
+export default function BookingCard({
+  booking,
+  className = "",
+  compact = false,
+}: BookingCardProps) {
   const getLabelColor = (type: string, status: string) => {
     if (type === "match") return "bg-blue-500";
     if (type === "training") return "bg-purple-500";
@@ -33,7 +37,9 @@ export default function BookingCard({ booking, className = "", compact = false }
 
   if (compact) {
     return (
-      <div className={`bg-white/95 backdrop-blur-sm rounded-xl p-3.5 shadow-md hover:shadow-lg transition-all duration-200 ${className}`}>
+      <div
+        className={`bg-white/95 backdrop-blur-sm rounded-xl p-3.5 shadow-md hover:shadow-lg transition-all duration-200 ${className}`}
+      >
         <div className="flex items-center justify-between mb-1.5">
           <div
             className={`${getLabelColor(
@@ -44,7 +50,9 @@ export default function BookingCard({ booking, className = "", compact = false }
             {getLabelText()}
           </div>
           {booking.status === "confirmed" && (
-            <span className="text-[11px] text-emerald-600 font-semibold">Potvrđen</span>
+            <span className="text-[11px] text-emerald-600 font-semibold">
+              Potvrđen
+            </span>
           )}
         </div>
 
@@ -64,7 +72,9 @@ export default function BookingCard({ booking, className = "", compact = false }
   }
 
   return (
-    <div className={`bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-200 ${className}`}>
+    <div
+      className={`bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-200 ${className}`}
+    >
       <div className="flex justify-between items-start mb-2">
         <div
           className={`${getLabelColor(
